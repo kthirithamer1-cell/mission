@@ -21,7 +21,7 @@ public class UtilisateurController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         UtilisateurDTO utilisateur = utilisateurService.getById(id);
         if (utilisateur != null) {
             return ResponseEntity.ok(utilisateur);
@@ -30,7 +30,7 @@ public class UtilisateurController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UtilisateurDTO dto) {
+    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody UtilisateurDTO dto) {
         UtilisateurDTO updated = utilisateurService.update(id, dto);
         if (updated != null) {
             return ResponseEntity.ok(updated);
@@ -39,7 +39,7 @@ public class UtilisateurController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         utilisateurService.delete(id);
         return ResponseEntity.ok("Utilisateur deleted successfully");
     }

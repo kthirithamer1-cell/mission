@@ -29,9 +29,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        if (request.getUtilisateurDTO() == null) {
+            return ResponseEntity.status(400).body("utilisateurDTO is required");
+        }
         UtilisateurDTO dto = request.getUtilisateurDTO();
         String userType = request.getUserType();
-        dto.setRole(userType); // Ensure role is set for the mapper
+        dto.setRole(userType); 
 
         UtilisateurDTO existingUser = utilisateurService.getByEmail(dto.getEmail());
         if (existingUser != null) {
