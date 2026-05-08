@@ -1,8 +1,9 @@
 package com.projectmission.controller;
 
 import com.projectmission.dto.UtilisateurDTO;
-import com.projectmission.service.UtilisateurService;
+import com.projectmission.model.Utilisateur;
 import com.projectmission.security.JwtUtil;
+import com.projectmission.service.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UtilisateurDTO dto) {
-        UtilisateurDTO utilisateur = utilisateurService.getByEmail(dto.getEmail());
-        if (utilisateur != null) {
+        Utilisateur utilisateur = utilisateurService.findEntityByEmail(dto.getEmail());
+        if (utilisateur != null && utilisateurService.checkPassword(dto.getMotDePasse(), utilisateur.getMotDePasse())) {
             String token = jwtUtil.generateToken(utilisateur.getEmail(), utilisateur.getRole());
-            return ResponseEntity.ok(new LoginResponse(token, utilisateur));
+            return ResponseEntity.ok(new LoginResponse(token, utilisateurService.getByEmail(utilisateur.getEmail())));
         }
         return ResponseEntity.status(401).body("Invalid credentials");
     }
@@ -34,7 +35,7 @@ public class AuthController {
         }
         UtilisateurDTO dto = request.getUtilisateurDTO();
         String userType = request.getUserType();
-        dto.setRole(userType); 
+        dto.setRole(userType != null ? userType.toUpperCase() : null);
 
         UtilisateurDTO existingUser = utilisateurService.getByEmail(dto.getEmail());
         if (existingUser != null) {
@@ -68,4 +69,3 @@ public class AuthController {
         public void setUserType(String userType) { this.userType = userType; }
     }
 }
-

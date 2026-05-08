@@ -7,6 +7,7 @@ import com.projectmission.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +41,10 @@ public class UtilisateurService {
         return utilisateur.map(utilisateurMapper::toDTO).orElse(null);
     }
 
+    public Utilisateur findEntityByEmail(String email) {
+        return utilisateurRepository.findByEmail(email).orElse(null);
+    }
+
     public UtilisateurDTO create(UtilisateurDTO dto) {
         Utilisateur utilisateur = utilisateurMapper.toEntity(dto);
         if (dto.getMotDePasse() != null) {
@@ -63,8 +68,11 @@ public class UtilisateurService {
         return null;
     }
 
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        return rawPassword != null && encodedPassword != null && passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
     public void delete(Long id) {
         utilisateurRepository.deleteById(id);
     }
 }
-
