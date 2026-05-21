@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entraîneurs — EST Natation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin-dashboard.css" />
+</head>
+<body class="dash-body" data-page="entraineurs">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a class="dash-brand" href="admin-dashboard.html">
+        <div class="dash-brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18c2.5-3 5.5-4.5 10-4.5S19.5 15 22 18H2zm8-14c-1.5 2-2.5 4-2.5 6a2.5 2.5 0 0 0 5 0c0-2-1-4-2.5-6z" /></svg>
+        </div>
+        <div>
+          <span class="dash-brand-text">EST Natation</span>
+          <span class="dash-brand-sub">Administration du club</span>
+        </div>
+      </a>
+      <nav class="dash-nav" aria-label="Navigation principale">
+        <ul class="dash-nav-links">
+          <li><a href="resultats.html">Résultats</a></li>
+          <li><a href="admin-dashboard.html">Tableau de bord</a></li>
+          <li><a href="athletes.html">Athlètes</a></li>
+          <li><a href="entraineurs.html" class="active" aria-current="page">Entraîneurs</a></li>
+          <li><a href="reservations.html">Réservations</a></li>
+        </ul>
+      </nav>
+      <div class="dash-header-actions">
+        <button type="button" class="dash-icon-btn theme-toggle-btn" data-ui-action="toggle-theme" title="Thème clair / sombre" aria-label="Basculer le thème">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v2H10V2h2zm0 20v-2h2v2h-2zM4.22 5.64l1.42-1.42 1.41 1.41-1.41 1.42-1.42-1.41zm15.56 12.72 1.42 1.42-1.41 1.41-1.42-1.41 1.41-1.42zM2 12h2v-2H2v2zm18 0h2v-2h-2v2zM5.64 19.78l1.41-1.42 1.42 1.41-1.41 1.42-1.42-1.41zm12.72-15.56 1.42-1.41 1.41 1.41-1.41 1.42-1.42-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-6.9-6.9A9 9 0 0 0 12 3z"/></svg>
+        </button>
+        <button type="button" class="dash-icon-btn" title="Menu"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z" /></svg></button>
+        <div class="dash-avatar" title="Profil administrateur">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+        </div>
+      </div>
+    </header>
+
+    <p class="club-context-banner">
+      Staff technique de <strong>Espérance Sportive de Tunis</strong> — entraîneurs rattachés au club uniquement.
+    </p>
+
+    <main class="dash-page-main">
+      <div class="dash-page-head">
+        <div>
+          <p class="dash-card-label">Staff</p>
+          <h1 class="dash-card-title">Entraîneurs du club</h1>
+          <p class="dash-page-sub">Encadrement des groupes par catégorie d'âge</p>
+        </div>
+        <button type="button" class="dash-btn dash-btn-primary" data-ui-action="add-coach">Ajouter un entraîneur</button>
+      </div>
+
+      <section class="dash-card dash-table-card" aria-labelledby="coaches-heading">
+        <div class="panel-head-row">
+          <div>
+            <p class="dash-card-label">Équipe</p>
+            <h2 id="coaches-heading" class="dash-card-title">Liste des entraîneurs</h2>
+          </div>
+          <button type="button" class="dash-btn" data-ui-action="refresh">Actualiser</button>
+        </div>
+        <div class="table-wrap">
+          <table class="dash-data-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Groupes suivis</th>
+                <th>Licence</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-nom="Trabelsi" data-prenom="Sami" data-email="sami.trabelsi@est.tn" data-groups="Cadets, Juniors" data-licence="Active">
+                <td>Trabelsi</td>
+                <td>Sami</td>
+                <td>sami.trabelsi@est.tn</td>
+                <td>Cadets, Juniors</td>
+                <td>Active</td>
+                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-coach">Modifier</button></td>
+              </tr>
+              <tr data-nom="Ben Amor" data-prenom="Leila" data-email="leila.benamor@est.tn" data-groups="Benjamins, Minimes" data-licence="Active">
+                <td>Ben Amor</td>
+                <td>Leila</td>
+                <td>leila.benamor@est.tn</td>
+                <td>Benjamins, Minimes</td>
+                <td>Active</td>
+                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-coach">Modifier</button></td>
+              </tr>
+              <tr data-nom="Gharbi" data-prenom="Karim" data-email="karim.gharbi@est.tn" data-groups="Poussin, A venir" data-licence="Active">
+                <td>Gharbi</td>
+                <td>Karim</td>
+                <td>karim.gharbi@est.tn</td>
+                <td>Poussin, A venir</td>
+                <td>Active</td>
+                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-coach">Modifier</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/admin-ui.js"></script>
+</body>
+</html>

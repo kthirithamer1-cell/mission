@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Résultats — Espérance Sportive de Tunis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin-dashboard.css" />
+</head>
+<body class="dash-body" data-page="resultats">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a class="dash-brand" href="admin-dashboard.html">
+        <div class="dash-brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2 18c2.5-3 5.5-4.5 10-4.5S19.5 15 22 18H2zm8-14c-1.5 2-2.5 4-2.5 6a2.5 2.5 0 0 0 5 0c0-2-1-4-2.5-6z" />
+          </svg>
+        </div>
+        <div>
+          <span class="dash-brand-text">EST Natation</span>
+          <span class="dash-brand-sub">Administration du club</span>
+        </div>
+      </a>
+
+      <nav class="dash-nav" aria-label="Navigation principale">
+        <ul class="dash-nav-links">
+          <li><a href="resultats.html" class="active" aria-current="page">Résultats</a></li>
+          <li><a href="admin-dashboard.html">Tableau de bord</a></li>
+          <li><a href="athletes.html">Athlètes</a></li>
+          <li><a href="entraineurs.html">Entraîneurs</a></li>
+          <li><a href="reservations.html">Réservations</a></li>
+        </ul>
+      </nav>
+      <div class="dash-header-actions">
+        <button type="button" class="dash-icon-btn theme-toggle-btn" data-ui-action="toggle-theme" title="Thème clair / sombre" aria-label="Basculer le thème">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v2H10V2h2zm0 20v-2h2v2h-2zM4.22 5.64l1.42-1.42 1.41 1.41-1.41 1.42-1.42-1.41zm15.56 12.72 1.42 1.42-1.41 1.41-1.42-1.41 1.41-1.42zM2 12h2v-2H2v2zm18 0h2v-2h-2v2zM5.64 19.78l1.41-1.42 1.42 1.41-1.41 1.42-1.42-1.41zm12.72-15.56 1.42-1.41 1.41 1.41-1.41 1.42-1.42-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-6.9-6.9A9 9 0 0 0 12 3z"/></svg>
+        </button>
+        <button type="button" class="dash-icon-btn" title="Menu">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z" /></svg>
+        </button>
+        <div class="dash-avatar" title="Profil administrateur">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <main class="dash-page-main">
+      <section class="comp-hero dash-card" aria-labelledby="comp-title">
+        <div class="comp-hero-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.5 3.89 3.17 7.06 6.61 7.06s6.11-3.17 6.61-7.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zm-2 0v2H7V5h10zm-2 14h-2v2H9v-2H7v-2h10v2z" />
+          </svg>
+        </div>
+        <p class="dash-card-label">Compétitions</p>
+        <h1 id="comp-title" class="dash-card-title">Compétitions de Natation</h1>
+        <p class="comp-hero-sub">Parcourez tous les résultats des championnats et compétitions</p>
+      </section>
+
+      <section class="comp-toolbar dash-card" aria-label="Recherche et filtres">
+        <label class="comp-search">
+          <span class="comp-search-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3-3" stroke-linecap="round" />
+            </svg>
+          </span>
+          <input type="search" class="comp-search-input" placeholder="Rechercher des compétitions..." autocomplete="off" />
+        </label>
+        <div class="comp-years" role="group" aria-label="Filtrer par année">
+          <button type="button" class="year-pill is-active">Toutes</button>
+          <button type="button" class="year-pill">2024</button>
+          <button type="button" class="year-pill">2023</button>
+          <button type="button" class="year-pill">2022</button>
+          <button type="button" class="year-pill">2021</button>
+          <button type="button" class="year-pill">2020</button>
+        </div>
+      </section>
+
+      <div class="comp-columns">
+        <section class="season-column dash-card" aria-labelledby="season-2324">
+          <header class="season-head">
+            <h2 id="season-2324" class="season-title">Résultats Saison 2023-2024</h2>
+            <span class="season-badge">compétitions</span>
+          </header>
+          <div class="season-list">
+            <article class="comp-card-item">
+              <div>
+                <h3 class="comp-card-title">Résultats Championnat TC 25m</h3>
+                <p class="comp-card-cat">Championship</p>
+              </div>
+              <button type="button" class="comp-card-btn" data-ui-action="view-results">Voir les résultats</button>
+            </article>
+            <article class="comp-card-item">
+              <div>
+                <h3 class="comp-card-title">Résultats Championnat D'hiver benjamins</h3>
+                <p class="comp-card-cat">Youth Category</p>
+              </div>
+              <button type="button" class="comp-card-btn" data-ui-action="view-results">Voir les résultats</button>
+            </article>
+            <article class="comp-card-item">
+              <div>
+                <h3 class="comp-card-title">Coupe interclubs — phase finale</h3>
+                <p class="comp-card-cat">Cup</p>
+              </div>
+              <button type="button" class="comp-card-btn" data-ui-action="view-results">Voir les résultats</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="season-column dash-card" aria-labelledby="season-2223">
+          <header class="season-head">
+            <h2 id="season-2223" class="season-title">Résultats Saison 2022-2023</h2>
+            <span class="season-badge">compétitions</span>
+          </header>
+          <div class="season-list">
+            <article class="comp-card-item">
+              <div>
+                <h3 class="comp-card-title">Championnat régional cadets</h3>
+                <p class="comp-card-cat">Championship</p>
+              </div>
+              <button type="button" class="comp-card-btn" data-ui-action="view-results">Voir les résultats</button>
+            </article>
+            <article class="comp-card-item">
+              <div>
+                <h3 class="comp-card-title">Meeting national — bassin 50m</h3>
+                <p class="comp-card-cat">Cup</p>
+              </div>
+              <button type="button" class="comp-card-btn" data-ui-action="view-results">Voir les résultats</button>
+            </article>
+            <article class="comp-card-item">
+              <div>
+                <h3 class="comp-card-title">Critérium minimes printemps</h3>
+                <p class="comp-card-cat">Youth Category</p>
+              </div>
+              <button type="button" class="comp-card-btn" data-ui-action="view-results">Voir les résultats</button>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="js/admin-ui.js"></script>
+</body>
+</html>

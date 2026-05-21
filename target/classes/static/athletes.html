@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Athlètes — EST Natation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin-dashboard.css" />
+</head>
+<body class="dash-body" data-page="athletes">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a class="dash-brand" href="admin-dashboard.html">
+        <div class="dash-brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18c2.5-3 5.5-4.5 10-4.5S19.5 15 22 18H2zm8-14c-1.5 2-2.5 4-2.5 6a2.5 2.5 0 0 0 5 0c0-2-1-4-2.5-6z" /></svg>
+        </div>
+        <div>
+          <span class="dash-brand-text">EST Natation</span>
+          <span class="dash-brand-sub">Administration du club</span>
+        </div>
+      </a>
+      <nav class="dash-nav" aria-label="Navigation principale">
+        <ul class="dash-nav-links">
+          <li><a href="resultats.html">Résultats</a></li>
+          <li><a href="admin-dashboard.html">Tableau de bord</a></li>
+          <li><a href="athletes.html" class="active" aria-current="page">Athlètes</a></li>
+          <li><a href="entraineurs.html">Entraîneurs</a></li>
+          <li><a href="reservations.html">Réservations</a></li>
+        </ul>
+      </nav>
+      <div class="dash-header-actions">
+        <button type="button" class="dash-icon-btn theme-toggle-btn" data-ui-action="toggle-theme" title="Thème clair / sombre" aria-label="Basculer le thème">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v2H10V2h2zm0 20v-2h2v2h-2zM4.22 5.64l1.42-1.42 1.41 1.41-1.41 1.42-1.42-1.41zm15.56 12.72 1.42 1.42-1.41 1.41-1.42-1.41 1.41-1.42zM2 12h2v-2H2v2zm18 0h2v-2h-2v2zM5.64 19.78l1.41-1.42 1.42 1.41-1.41 1.42-1.42-1.41zm12.72-15.56 1.42-1.41 1.41 1.41-1.41 1.42-1.42-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-6.9-6.9A9 9 0 0 0 12 3z"/></svg>
+        </button>
+        <button type="button" class="dash-icon-btn" title="Menu"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z" /></svg></button>
+        <div class="dash-avatar" title="Profil administrateur">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+        </div>
+      </div>
+    </header>
+
+    <p class="club-context-banner">
+      Effectif de <strong>Espérance Sportive de Tunis</strong> — chaque nageur ajouté est automatiquement rattaché à ce club.
+    </p>
+
+    <main class="dash-page-main">
+      <div class="dash-page-head">
+        <div>
+          <p class="dash-card-label">Effectif</p>
+          <h1 class="dash-card-title">Athlètes du club</h1>
+          <p class="dash-page-sub">Nageurs et licences — club : EST Natation</p>
+        </div>
+        <button type="button" class="dash-btn dash-btn-primary" data-ui-action="refresh">Actualiser</button>
+      </div>
+
+      <section class="dash-card dash-table-card" aria-labelledby="athletes-heading">
+        <div class="panel-head-row">
+          <div>
+            <p class="dash-card-label">Annuaire</p>
+            <h2 id="athletes-heading" class="dash-card-title">Liste des nageurs</h2>
+          </div>
+          <button type="button" class="dash-btn dash-btn-primary" data-ui-action="add-athlete">Ajouter un athlète</button>
+        </div>
+        <div class="table-wrap">
+          <table class="dash-data-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Catégorie</th>
+                <th>Club</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-nom="Ben Ali" data-prenom="Ahmed" data-email="ahmed.benali@est.tn" data-cat="CADETS">
+                <td>Ben Ali</td>
+                <td>Ahmed</td>
+                <td>ahmed.benali@est.tn</td>
+                <td>CADETS</td>
+                <td>EST</td>
+                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-athlete">Modifier</button></td>
+              </tr>
+              <tr data-nom="Mansouri" data-prenom="Sarra" data-email="sarra.mansouri@est.tn" data-cat="JUNIORS">
+                <td>Mansouri</td>
+                <td>Sarra</td>
+                <td>sarra.mansouri@est.tn</td>
+                <td>JUNIORS</td>
+                <td>EST</td>
+                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-athlete">Modifier</button></td>
+              </tr>
+              <tr data-nom="Gharbi" data-prenom="Youssef" data-email="youssef.gharbi@est.tn" data-cat="MINIMES">
+                <td>Gharbi</td>
+                <td>Youssef</td>
+                <td>youssef.gharbi@est.tn</td>
+                <td>MINIMES</td>
+                <td>EST</td>
+                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-athlete">Modifier</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/admin-ui.js"></script>
+</body>
+</html>
