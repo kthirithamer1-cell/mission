@@ -7,6 +7,7 @@ public class UtilisateurDTO {
     private String email;
     private String motDePasse;
     private String role;
+    private Boolean emailVerified;
 
     public UtilisateurDTO() {}
 
@@ -30,5 +31,7 @@ public class UtilisateurDTO {
     public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public Boolean getEmailVerified() { return emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
 }
 

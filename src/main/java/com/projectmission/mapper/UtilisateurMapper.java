@@ -17,6 +17,7 @@ public class UtilisateurMapper {
         dto.setPrenom(utilisateur.getPrenom());
         dto.setEmail(utilisateur.getEmail());
         dto.setRole(utilisateur.getRole());
+        dto.setEmailVerified(utilisateur.getEmailVerified());
         return dto;
     }
 

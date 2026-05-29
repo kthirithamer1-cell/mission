@@ -15,8 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -52,8 +54,9 @@ public class AuthControllerTest {
     void testLoginSuccess() throws Exception {
         UtilisateurDTO loginDto = new UtilisateurDTO();
         loginDto.setEmail("john.doe@example.com");
+        loginDto.setMotDePasse("password123");
 
-        when(utilisateurService.getByEmail("john.doe@example.com")).thenReturn(testUser);
+        when(utilisateurService.authenticate("john.doe@example.com", "password123")).thenReturn(testUser);
         when(jwtUtil.generateToken(anyString(), anyString())).thenReturn("mock-token");
 
         mockMvc.perform(post("/api/auth/login")
@@ -70,8 +73,9 @@ public class AuthControllerTest {
     void testLoginFailure() throws Exception {
         UtilisateurDTO loginDto = new UtilisateurDTO();
         loginDto.setEmail("wrong@example.com");
+        loginDto.setMotDePasse("wrong");
 
-        when(utilisateurService.getByEmail("wrong@example.com")).thenReturn(null);
+        when(utilisateurService.authenticate("wrong@example.com", "wrong")).thenReturn(null);
 
         mockMvc.perform(post("/api/auth/login")
                 .with(csrf())
@@ -79,6 +83,37 @@ public class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string("Invalid credentials"));
+    }
+
+    @Test
+    @WithMockUser
+    void testLoginEmailNotVerified() throws Exception {
+        UtilisateurDTO loginDto = new UtilisateurDTO();
+        loginDto.setEmail("john.doe@example.com");
+        loginDto.setMotDePasse("password123");
+
+        when(utilisateurService.authenticate("john.doe@example.com", "password123"))
+                .thenThrow(new com.projectmission.exception.EmailNotVerifiedException(
+                        "Email non vérifié. Consultez votre boîte mail."
+                ));
+
+        mockMvc.perform(post("/api/auth/login")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDto)))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Email non vérifié. Consultez votre boîte mail."));
+    }
+
+    @Test
+    @WithMockUser
+    void testVerifyEmailSuccess() throws Exception {
+        doNothing().when(utilisateurService).verifyEmail("valid-token");
+
+        mockMvc.perform(get("/api/auth/verify-email")
+                .param("token", "valid-token"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -96,7 +131,8 @@ public class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.utilisateur.email").value("john.doe@example.com"));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.projectmission.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -14,6 +15,9 @@ public abstract class Utilisateur {
     private String email;
     private String motDePasse;
     private String role; // ADMIN, NAGEUR, ENTRAINEUR
+    private Boolean emailVerified;
+    private String verificationToken;
+    private LocalDateTime verificationTokenExpiry;
 
     public Utilisateur() {}
 
@@ -29,5 +33,15 @@ public abstract class Utilisateur {
     public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public Boolean getEmailVerified() { return emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+    public String getVerificationToken() { return verificationToken; }
+    public void setVerificationToken(String verificationToken) { this.verificationToken = verificationToken; }
+    public LocalDateTime getVerificationTokenExpiry() { return verificationTokenExpiry; }
+    public void setVerificationTokenExpiry(LocalDateTime verificationTokenExpiry) { this.verificationTokenExpiry = verificationTokenExpiry; }
+
+    public boolean isAccountVerified() {
+        return emailVerified == null || emailVerified;
+    }
 }
 
