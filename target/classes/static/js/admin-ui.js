@@ -386,6 +386,7 @@
   }
 
   function initHeader() {
+    syncHeaderActions();
     var menuBtn = $(".dash-icon-btn[title='Menu']");
     if (menuBtn) {
       menuBtn.addEventListener("click", function () {
@@ -407,6 +408,27 @@
     });
   }
 
+  function syncHeaderActions() {
+    var actions = $(".dash-header-actions");
+    if (!actions) return;
+
+    if (typeof EstApi !== "undefined" && EstApi.getToken && EstApi.getToken() && !actions.querySelector('[data-ui-action="logout"]')) {
+      var logout = document.createElement("button");
+      logout.type = "button";
+      logout.className = "dash-btn";
+      logout.setAttribute("data-ui-action", "logout");
+      logout.textContent = "Déconnexion";
+      actions.appendChild(logout);
+    }
+
+    var nav = $(".dash-nav-links");
+    if (nav && typeof EstApi !== "undefined" && EstApi.isSuperAdmin && EstApi.isSuperAdmin() && !nav.querySelector('a[href="super-admin.html"]')) {
+      var item = document.createElement("li");
+      item.innerHTML = '<a href="super-admin.html">Plateforme</a>';
+      nav.appendChild(item);
+    }
+  }
+
   function handleAction(action, btn) {
     switch (action) {
       case "toggle-theme": {
@@ -415,6 +437,13 @@
         toast(isLight ? "Thème sombre activé" : "Thème clair activé", "info");
         break;
       }
+      case "logout":
+        if (typeof EstApi !== "undefined" && EstApi.logout) {
+          EstApi.logout();
+        } else {
+          window.location.href = "login.html";
+        }
+        break;
       case "add-athlete":
         openAthleteForm();
         break;
@@ -431,6 +460,9 @@
         openRequestSlotForm();
         break;
       case "refresh":
+        if (typeof window.estPageRefresh === "function") {
+          window.estPageRefresh();
+        }
         withLoading(btn, "Données actualisées");
         break;
       case "cancel-slot":

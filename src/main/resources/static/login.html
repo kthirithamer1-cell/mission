@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — EST Natation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin-dashboard.css" />
+  <style>
+    .login-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .login-card { width: 100%; max-width: 420px; padding: 2rem; }
+    .login-card h1 { margin: 0.5rem 0 1.5rem; font-size: 1.5rem; }
+    .login-field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+    .login-field span { font-size: 0.8rem; color: var(--dash-muted); }
+    .login-field input { padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--dash-border); background: rgba(0,35,65,0.35); color: var(--dash-text); font-family: inherit; }
+    .login-error { color: #f87171; font-size: 0.85rem; min-height: 1.2rem; margin-bottom: 0.5rem; }
+    .login-hint { margin-top: 1.25rem; font-size: 0.75rem; color: var(--dash-dim); line-height: 1.5; }
+  </style>
+</head>
+<body class="dash-body">
+  <div class="login-shell">
+    <section class="dash-card login-card">
+      <p class="dash-card-label">EST Natation</p>
+      <h1 class="dash-card-title">Connexion administration</h1>
+      <p class="dash-page-sub">Club ou plateforme (piscines partagées)</p>
+      <form id="login-form">
+        <label class="login-field">
+          <span>Email</span>
+          <input type="email" id="login-email" required placeholder="admin@est.tn" />
+        </label>
+        <label class="login-field">
+          <span>Mot de passe</span>
+          <input type="password" id="login-password" required placeholder="••••••••" />
+        </label>
+        <p class="login-error" id="login-error"></p>
+        <button type="submit" class="dash-btn dash-btn-primary" style="width:100%;">Se connecter</button>
+      </form>
+      <p class="login-hint">
+        <strong>Dev — Admin club EST:</strong> admin@est.tn / admin123<br />
+        <strong>Super admin plateforme:</strong> super@est.tn / admin123
+      </p>
+    </section>
+  </div>
+  <script src="js/api-client.js"></script>
+  <script>
+    (function () {
+      if (EstApi.getToken()) {
+        EstApi.getUser().role === "SUPER_ADMIN" || EstApi.getUser().superAdmin
+          ? (window.location.href = "super-admin.html")
+          : (window.location.href = "admin-dashboard.html");
+        return;
+      }
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var err = document.getElementById("login-error");
+        err.textContent = "";
+        EstApi.login(
+          document.getElementById("login-email").value.trim(),
+          document.getElementById("login-password").value
+        ).then(function (data) {
+          var u = data.utilisateur;
+          if (u.role === "SUPER_ADMIN" || u.superAdmin) {
+            window.location.href = "super-admin.html";
+          } else {
+            window.location.href = "admin-dashboard.html";
+          }
+        }).catch(function (ex) {
+          err.textContent = ex.message || "Identifiants invalides";
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

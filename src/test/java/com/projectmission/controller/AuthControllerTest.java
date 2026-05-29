@@ -2,6 +2,8 @@ package com.projectmission.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectmission.dto.UtilisateurDTO;
+import com.projectmission.model.Admin;
+import com.projectmission.model.Utilisateur;
 import com.projectmission.security.JwtUtil;
 import com.projectmission.service.UtilisateurService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,7 @@ public class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     private UtilisateurDTO testUser;
+    private Utilisateur testUserEntity;
 
     @BeforeEach
     void setUp() {
@@ -45,6 +48,14 @@ public class AuthControllerTest {
         testUser.setPrenom("Doe");
         testUser.setEmail("john.doe@example.com");
         testUser.setRole("ADMIN");
+
+        testUserEntity = new Admin();
+        testUserEntity.setId(1L);
+        testUserEntity.setNom("John");
+        testUserEntity.setPrenom("Doe");
+        testUserEntity.setEmail("john.doe@example.com");
+        testUserEntity.setMotDePasse("encoded-password");
+        testUserEntity.setRole("ADMIN");
     }
 
     @Test
@@ -52,7 +63,10 @@ public class AuthControllerTest {
     void testLoginSuccess() throws Exception {
         UtilisateurDTO loginDto = new UtilisateurDTO();
         loginDto.setEmail("john.doe@example.com");
+        loginDto.setMotDePasse("secret");
 
+        when(utilisateurService.findEntityByEmail("john.doe@example.com")).thenReturn(testUserEntity);
+        when(utilisateurService.checkPassword("secret", "encoded-password")).thenReturn(true);
         when(utilisateurService.getByEmail("john.doe@example.com")).thenReturn(testUser);
         when(jwtUtil.generateToken(anyString(), anyString())).thenReturn("mock-token");
 

@@ -27,6 +27,7 @@
           <li><a href="admin-dashboard.html">Tableau de bord</a></li>
           <li><a href="athletes.html" class="active" aria-current="page">Athlètes</a></li>
           <li><a href="entraineurs.html">Entraîneurs</a></li>
+          <li><a href="seances.html">Séances</a></li>
           <li><a href="reservations.html">Réservations</a></li>
         </ul>
       </nav>
@@ -77,36 +78,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr data-nom="Ben Ali" data-prenom="Ahmed" data-email="ahmed.benali@est.tn" data-cat="CADETS">
-                <td>Ben Ali</td>
-                <td>Ahmed</td>
-                <td>ahmed.benali@est.tn</td>
-                <td>CADETS</td>
-                <td>EST</td>
-                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-athlete">Modifier</button></td>
-              </tr>
-              <tr data-nom="Mansouri" data-prenom="Sarra" data-email="sarra.mansouri@est.tn" data-cat="JUNIORS">
-                <td>Mansouri</td>
-                <td>Sarra</td>
-                <td>sarra.mansouri@est.tn</td>
-                <td>JUNIORS</td>
-                <td>EST</td>
-                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-athlete">Modifier</button></td>
-              </tr>
-              <tr data-nom="Gharbi" data-prenom="Youssef" data-email="youssef.gharbi@est.tn" data-cat="MINIMES">
-                <td>Gharbi</td>
-                <td>Youssef</td>
-                <td>youssef.gharbi@est.tn</td>
-                <td>MINIMES</td>
-                <td>EST</td>
-                <td><button type="button" class="dash-btn dash-btn--sm" data-ui-action="edit-athlete">Modifier</button></td>
-              </tr>
+              <tr><td colspan="6" class="dash-empty-table">Chargement des nageurs...</td></tr>
             </tbody>
           </table>
         </div>
       </section>
     </main>
   </div>
+  <script src="js/api-client.js"></script>
   <script src="js/admin-ui.js"></script>
+  <script src="js/admin-data.js"></script>
 </body>
 </html>

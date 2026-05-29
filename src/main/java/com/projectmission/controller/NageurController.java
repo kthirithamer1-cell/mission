@@ -15,7 +15,7 @@ public class NageurController {
     private NageurService service;
 
     @GetMapping
-    public ResponseEntity<List<NageurDTO>> getAll() { return ResponseEntity.ok(service.getAll()); }
+    public ResponseEntity<List<NageurDTO>> getAll() { return ResponseEntity.ok(service.getAllForCurrentUser()); }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {

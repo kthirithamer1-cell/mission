@@ -40,9 +40,11 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/resultats.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/athletes.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/entraineurs.html")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/seances.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/clubs.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/reservations.html")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/**")).hasAnyRole("ADMIN", "NAGEUR", "ENTRAINEUR")
+                        .requestMatchers(new AntPathRequestMatcher("/super-admin.html")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/**")).hasAnyRole("SUPER_ADMIN", "ADMIN", "NAGEUR", "ENTRAINEUR")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

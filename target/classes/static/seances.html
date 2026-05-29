@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Séances — EST Natation</title>
+  <link rel="stylesheet" href="css/admin-dashboard.css" />
+</head>
+<body class="dash-body" data-page="seances">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a class="dash-brand" href="admin-dashboard.html">
+        <div class="dash-brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18c2.5-3 5.5-4.5 10-4.5S19.5 15 22 18H2zm8-14c-1.5 2-2.5 4-2.5 6a2.5 2.5 0 0 0 5 0c0-2-1-4-2.5-6z"/></svg>
+        </div>
+        <div><span class="dash-brand-text">EST Natation</span><span class="dash-brand-sub">Séances d'entraînement</span></div>
+      </a>
+      <nav class="dash-nav">
+        <ul class="dash-nav-links">
+          <li><a href="resultats.html">Résultats</a></li>
+          <li><a href="admin-dashboard.html">Tableau de bord</a></li>
+          <li><a href="athletes.html">Athlètes</a></li>
+          <li><a href="entraineurs.html">Entraîneurs</a></li>
+          <li><a href="seances.html" class="active">Séances</a></li>
+          <li><a href="reservations.html">Réservations</a></li>
+        </ul>
+      </nav>
+      <div class="dash-header-actions">
+        <button type="button" class="dash-btn" data-ui-action="logout">Déconnexion</button>
+      </div>
+    </header>
+
+    <main class="dash-page-main">
+      <div class="dash-page-head">
+        <div>
+          <p class="dash-card-label">Planning club</p>
+          <h1 class="dash-card-title">Séances d'entraînement</h1>
+          <p class="dash-page-sub">Liez une séance à une réservation de couloirs et à un entraîneur</p>
+        </div>
+        <button type="button" class="dash-btn dash-btn-primary" data-ui-action="add-seance">Planifier une séance</button>
+      </div>
+
+      <section class="dash-card dash-table-card">
+        <div class="table-wrap">
+          <table class="dash-data-table" id="seances-table">
+            <thead>
+              <tr><th>Titre</th><th>Date</th><th>Horaire</th><th>Entraîneur</th><th>Description</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/api-client.js"></script>
+  <script src="js/admin-ui.js"></script>
+  <script src="js/admin-data.js"></script>
+</body>
+</html>

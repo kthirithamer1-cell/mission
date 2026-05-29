@@ -4,6 +4,7 @@ import com.projectmission.dto.NageurDTO;
 import com.projectmission.mapper.NageurMapper;
 import com.projectmission.model.Nageur;
 import com.projectmission.repository.NageurRepository;
+import com.projectmission.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,24 @@ public class NageurService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<NageurDTO> getAll() { return repository.findAll().stream().map(mapper::toDTO).collect(Collectors.toList()); }
+    @Autowired
+    private CurrentUserService currentUserService;
+
+    public List<NageurDTO> getAllForCurrentUser() {
+        if (currentUserService.isSuperAdmin()) {
+            return repository.findAll().stream().map(mapper::toDTO).collect(Collectors.toList());
+        }
+        Long clubId = currentUserService.getClubId();
+        if (clubId == null) return List.of();
+        return repository.findByClub_Id(clubId).stream().map(mapper::toDTO).collect(Collectors.toList());
+    }
+
+    public List<NageurDTO> getAll() { return getAllForCurrentUser(); }
     public NageurDTO getById(Long id) { return repository.findById(id).map(mapper::toDTO).orElse(null); }
     public NageurDTO create(NageurDTO dto) {
+        if (!currentUserService.isSuperAdmin()) {
+            dto.setClubId(currentUserService.getClubId());
+        }
         Nageur nageur = mapper.toEntity(dto);
         if (dto.getMotDePasse() != null) {
             nageur.setMotDePasse(passwordEncoder.encode(dto.getMotDePasse()));

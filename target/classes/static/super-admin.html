@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administration plateforme — Piscines</title>
+  <link rel="stylesheet" href="css/admin-dashboard.css" />
+</head>
+<body class="dash-body" data-page="super-admin">
+  <div class="dash-shell">
+    <header class="dash-header">
+      <a class="dash-brand" href="super-admin.html">
+        <div class="dash-brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18c2.5-3 5.5-4.5 10-4.5S19.5 15 22 18H2zm8-14c-1.5 2-2.5 4-2.5 6a2.5 2.5 0 0 0 5 0c0-2-1-4-2.5-6z"/></svg>
+        </div>
+        <div>
+          <span class="dash-brand-text">EST Plateforme</span>
+          <span class="dash-brand-sub">Super administration</span>
+        </div>
+      </a>
+      <nav class="dash-nav">
+        <ul class="dash-nav-links">
+          <li><a href="super-admin.html" class="active">Plateforme</a></li>
+          <li><a href="admin-dashboard.html">Vue club</a></li>
+        </ul>
+      </nav>
+      <div class="dash-header-actions">
+        <button type="button" class="dash-btn" data-ui-action="logout">Déconnexion</button>
+      </div>
+    </header>
+
+    <p class="club-context-banner">
+      <strong>Administrateur plateforme</strong> — Gérez les piscines, les clubs et l'attribution des couloirs. Les clubs gèrent ensuite leurs entraîneurs et séances.
+    </p>
+
+    <section class="stats-strip" id="platform-stats"></section>
+
+    <div class="dash-grid" style="margin-top:1.25rem;">
+      <section class="dash-card dash-table-card">
+        <div class="panel-head-row">
+          <div>
+            <p class="dash-card-label">Infrastructure</p>
+            <h2 class="dash-card-title">Piscines</h2>
+          </div>
+          <button type="button" class="dash-btn dash-btn-primary" data-ui-action="add-piscine">Ajouter une piscine</button>
+        </div>
+        <div class="table-wrap">
+          <table class="dash-data-table" id="piscines-table">
+            <thead><tr><th>Nom</th><th>Ville</th><th>Couloirs</th><th>Longueur</th><th>Statut</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="dash-card dash-table-card">
+        <div class="panel-head-row">
+          <div>
+            <p class="dash-card-label">Clubs</p>
+            <h2 class="dash-card-title">Clubs affiliés</h2>
+          </div>
+          <button type="button" class="dash-btn dash-btn-primary" data-ui-action="add-club">Ajouter un club</button>
+        </div>
+        <div class="table-wrap">
+          <table class="dash-data-table" id="clubs-table">
+            <thead><tr><th>Nom</th><th>Adresse</th><th>Affiliation</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section class="dash-card dash-table-card" style="margin-top:1.25rem;">
+      <div class="panel-head-row">
+        <div>
+          <p class="dash-card-label">Attribution couloirs</p>
+          <h2 class="dash-card-title">Réservations (validation)</h2>
+        </div>
+        <button type="button" class="dash-btn" data-ui-action="refresh-platform">Actualiser</button>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-data-table" id="platform-reservations-table">
+          <thead><tr><th>Club</th><th>Piscine</th><th>Date</th><th>Horaire</th><th>Couloirs</th><th>Statut</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dash-card dash-table-card" style="margin-top:1.25rem;">
+      <div class="panel-head-row">
+        <div>
+          <p class="dash-card-label">Comptes</p>
+          <h2 class="dash-card-title">Utilisateurs</h2>
+        </div>
+        <button type="button" class="dash-btn dash-btn-primary" data-ui-action="add-user">Créer un utilisateur</button>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-data-table" id="users-table">
+          <thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Club</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <script src="js/api-client.js"></script>
+  <script src="js/admin-ui.js"></script>
+  <script src="js/super-admin.js"></script>
+</body>
+</html>

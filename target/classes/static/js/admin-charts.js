@@ -1,5 +1,5 @@
 /**
- * Graphiques tableau de bord — répartition (pie) + évolution par niveau (line).
+ * Graphiques tableau de bord: repartition (pie) + evolution par niveau (line).
  */
 (function () {
   "use strict";
@@ -24,18 +24,30 @@
     "#f87171",
   ];
 
-  var PIE_COUNTS = [2, 4, 5, 4, 3, 3, 3];
+  var LINE_LABELS = ["Jan", "Fev", "Mar", "Avr", "Mai", "Juin"];
+  var pieChart = null;
+  var lineChart = null;
 
-  var LINE_LABELS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin"];
-  var LINE_DATA = {
-    "A VENIR": [1, 1, 2, 2, 2, 2],
-    POUSSIN: [2, 3, 3, 4, 4, 4],
-    BENJAMINS: [3, 4, 4, 5, 5, 5],
-    MINIMES: [2, 3, 3, 4, 4, 4],
-    CADETS: [2, 2, 3, 3, 3, 3],
-    JUNIORS: [2, 2, 2, 3, 3, 3],
-    SENIORS: [2, 2, 3, 3, 3, 3],
-  };
+  function stats() {
+    return window.estDashboardStats || {};
+  }
+
+  function categoryCounts() {
+    var repartition = stats().repartitionCategories || {};
+    return CATEGORIES.map(function (cat) {
+      return Number(repartition[cat] || 0);
+    });
+  }
+
+  function categorySeries() {
+    var evolution = stats().evolutionParCategorie || {};
+    var counts = categoryCounts();
+    var data = {};
+    CATEGORIES.forEach(function (cat, i) {
+      data[cat] = evolution[cat] || Array(6).fill(counts[i] || 0);
+    });
+    return data;
+  }
 
   function chartColors() {
     var light = document.body.getAttribute("data-theme") === "light";
@@ -45,9 +57,6 @@
       border: light ? "#e2e8f0" : "rgba(255,255,255,0.08)",
     };
   }
-
-  var pieChart = null;
-  var lineChart = null;
 
   function destroyCharts() {
     if (pieChart) {
@@ -65,18 +74,21 @@
     if (!canvas || typeof Chart === "undefined") return;
 
     var c = chartColors();
+    var counts = categoryCounts();
+    var total = counts.reduce(function (a, b) { return a + b; }, 0);
+    var chartLabels = total ? CATEGORIES : ["Aucune donnee"];
+    var chartCounts = total ? counts : [1];
+    var chartColorsList = total ? COLORS : ["rgba(139,156,179,0.18)"];
     pieChart = new Chart(canvas, {
       type: "pie",
       data: {
-        labels: CATEGORIES,
-        datasets: [
-          {
-            data: PIE_COUNTS,
-            backgroundColor: COLORS,
-            borderColor: c.border,
-            borderWidth: 2,
-          },
-        ],
+        labels: chartLabels,
+        datasets: [{
+          data: chartCounts,
+          backgroundColor: chartColorsList,
+          borderColor: c.border,
+          borderWidth: 2,
+        }],
       },
       options: {
         responsive: true,
@@ -86,10 +98,8 @@
           tooltip: {
             callbacks: {
               label: function (ctx) {
-                var total = PIE_COUNTS.reduce(function (a, b) {
-                  return a + b;
-                }, 0);
-                var pct = Math.round((ctx.raw / total) * 100);
+                if (!total) return "Aucune donnee";
+                var pct = total ? Math.round((ctx.raw / total) * 100) : 0;
                 return ctx.label + ": " + ctx.raw + " (" + pct + "%)";
               },
             },
@@ -100,20 +110,14 @@
 
     var legend = document.getElementById("cat-pie-legend");
     if (legend) {
-      var total = PIE_COUNTS.reduce(function (a, b) {
-        return a + b;
-      }, 0);
+      if (!total) {
+        legend.innerHTML = '<span class="pie-legend-item"><span class="pie-legend-dot" style="background:rgba(139,156,179,0.35)"></span>Aucun nageur dans la liste API</span>';
+        return;
+      }
       legend.innerHTML = CATEGORIES.map(function (label, i) {
-        var pct = Math.round((PIE_COUNTS[i] / total) * 100);
-        return (
-          '<span class="pie-legend-item"><span class="pie-legend-dot" style="background:' +
-          COLORS[i] +
-          '"></span>' +
-          label +
-          " <em>" +
-          pct +
-          "%</em></span>"
-        );
+        var pct = total ? Math.round((counts[i] / total) * 100) : 0;
+        return '<span class="pie-legend-item"><span class="pie-legend-dot" style="background:' +
+          COLORS[i] + '"></span>' + label + " <em>" + pct + "%</em></span>";
       }).join("");
     }
   }
@@ -123,10 +127,11 @@
     if (!canvas || typeof Chart === "undefined") return;
 
     var c = chartColors();
+    var liveData = categorySeries();
     var datasets = CATEGORIES.map(function (cat, i) {
       return {
         label: cat,
-        data: LINE_DATA[cat],
+        data: liveData[cat],
         borderColor: COLORS[i],
         backgroundColor: COLORS[i] + (document.body.getAttribute("data-theme") === "light" ? "22" : "33"),
         borderWidth: 2,
@@ -139,10 +144,7 @@
 
     lineChart = new Chart(canvas, {
       type: "line",
-      data: {
-        labels: LINE_LABELS,
-        datasets: datasets,
-      },
+      data: { labels: LINE_LABELS, datasets: datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -150,28 +152,16 @@
         plugins: {
           legend: {
             position: "bottom",
-            labels: {
-              color: c.text,
-              boxWidth: 10,
-              font: { size: 10 },
-              padding: 12,
-            },
+            labels: { color: c.text, boxWidth: 10, font: { size: 10 }, padding: 12 },
           },
         },
         scales: {
-          x: {
-            ticks: { color: c.text },
-            grid: { color: c.grid },
-          },
+          x: { ticks: { color: c.text }, grid: { color: c.grid } },
           y: {
             beginAtZero: true,
             ticks: { color: c.text, stepSize: 1 },
             grid: { color: c.grid },
-            title: {
-              display: true,
-              text: "Nageurs actifs",
-              color: c.text,
-            },
+            title: { display: true, text: "Nageurs actifs", color: c.text },
           },
         },
       },
