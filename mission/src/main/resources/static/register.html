@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register — Project Mission</title>
+  <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-brand">
+      <div class="logo" aria-hidden="true">🏊</div>
+      <h1>Project Mission</h1>
+      <p>Create your account</p>
+    </div>
+
+    <div class="auth-card">
+      <h2>Register</h2>
+      <div id="register-alert" class="alert" role="alert"></div>
+
+      <form id="register-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prenom">First name</label>
+            <input type="text" id="prenom" name="prenom" autocomplete="given-name" required />
+          </div>
+          <div class="form-group">
+            <label for="nom">Last name</label>
+            <input type="text" id="nom" name="nom" autocomplete="family-name" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="user-type">Role</label>
+          <select id="user-type" name="userType" required>
+            <option value="NAGEUR">Swimmer (Nageur)</option>
+            <option value="ENTRAINEUR">Coach (Entraîneur)</option>
+            <option value="ADMIN">Administrator</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="new-password" required minlength="6" placeholder="At least 6 characters" />
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Confirm password</label>
+          <input type="password" id="confirm-password" name="confirmPassword" autocomplete="new-password" required />
+        </div>
+        <button type="submit" class="btn-primary" id="register-submit">Create account</button>
+      </form>
+
+      <p class="auth-footer">
+        Already have an account? <a href="/login.html">Sign in</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/register.js"></script>
+</body>
+</html>

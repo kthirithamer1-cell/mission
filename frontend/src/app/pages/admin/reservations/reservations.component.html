@@ -1,0 +1,61 @@
+<main class="dash-page-main">
+  <div class="dash-page-head">
+    <div>
+      <p class="dash-card-label">Réservation de couloirs</p>
+      <h1 class="dash-card-title">Réservations du club</h1>
+      <p class="dash-page-sub">Créneaux réservés sur couloirs disponibles — exploitant piscine partagée · Espérance Sportive de Tunis</p>
+    </div>
+    <button type="button" class="dash-btn dash-btn-primary" (click)="requestSlot()">Demander un créneau</button>
+  </div>
+
+  <section class="dash-card dash-table-card" aria-labelledby="reservations-heading">
+    <div class="panel-head-row">
+      <div>
+        <p class="dash-card-label">Planning</p>
+        <h2 id="reservations-heading" class="dash-card-title">Couloirs réservés</h2>
+      </div>
+      <button type="button" class="dash-btn" (click)="refresh()">Actualiser</button>
+    </div>
+    <div class="table-wrap">
+      <table class="dash-data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Horaire</th>
+            <th>Bassin</th>
+            <th>Couloirs</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mer 21 mai</td>
+            <td>18:00 – 19:45</td>
+            <td>50 m</td>
+            <td>3 – 6</td>
+            <td><span class="rental-badge rental-badge--active">Confirmé</span></td>
+            <td><button type="button" class="dash-btn">Annuler</button></td>
+          </tr>
+          <tr>
+            <td>Ven 23 mai</td>
+            <td>17:30 – 18:30</td>
+            <td>25 m</td>
+            <td>1 – 2</td>
+            <td><span class="rental-badge rental-badge--active">Confirmé</span></td>
+            <td><button type="button" class="dash-btn">Annuler</button></td>
+          </tr>
+          <tr>
+            <td>Sam 24 mai</td>
+            <td>10:00 – 11:00</td>
+            <td>Éveil</td>
+            <td>Zone A</td>
+            <td><span class="rental-badge rental-badge--pending">En attente</span></td>
+            <td><button type="button" class="dash-btn" disabled>—</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="pool-owner-note">Les autres clubs du site peuvent réserver d'autres couloirs disponibles sur les mêmes créneaux. Contactez l'exploitant pour modifier une réservation.</p>
+  </section>
+</main>

@@ -1,0 +1,79 @@
+<div class="auth-gate">
+  <div class="auth-gate-shell">
+    <app-auth-brand subtitle="Administration du club" />
+
+    <section class="dash-card auth-gate-card">
+      <p class="dash-card-label">Accès</p>
+      <h1 class="dash-card-title auth-gate-title">Connexion</h1>
+
+      @if (alertMessage()) {
+        <div
+          class="auth-alert"
+          [class.auth-alert--error]="alertType() === 'error'"
+          [class.auth-alert--success]="alertType() === 'success'"
+          role="alert"
+        >
+          {{ alertMessage() }}
+        </div>
+      }
+
+      <form class="ui-form" (ngSubmit)="onSubmit()" novalidate>
+        <label class="ui-field">
+          <span>Email</span>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            autocomplete="email"
+            required
+            placeholder="vous@est.tn"
+          />
+        </label>
+        <label class="ui-field">
+          <span>Mot de passe</span>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="motDePasse"
+            autocomplete="current-password"
+            required
+            placeholder="••••••••"
+          />
+        </label>
+        <button
+          type="submit"
+          class="dash-btn dash-btn-primary auth-gate-submit"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <span class="auth-spinner"></span>Connexion…
+          } @else {
+            Se connecter
+          }
+        </button>
+      </form>
+
+      @if (showResend()) {
+        <button
+          type="button"
+          class="dash-btn auth-gate-submit"
+          [disabled]="resendLoading()"
+          (click)="resendVerification()"
+        >
+          @if (resendLoading()) {
+            <span class="auth-spinner"></span>Renvoi…
+          } @else {
+            Renvoyer l'email de vérification
+          }
+        </button>
+      }
+
+      <p class="auth-gate-footer">
+        Pas encore de compte ?
+        <a routerLink="/register">Créer un compte</a>
+      </p>
+    </section>
+  </div>
+</div>

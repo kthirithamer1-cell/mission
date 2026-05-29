@@ -1,0 +1,98 @@
+<main class="dash-page-main">
+  <section class="comp-hero dash-card" aria-labelledby="comp-title">
+    <div class="comp-hero-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.5 3.89 3.17 7.06 6.61 7.06s6.11-3.17 6.61-7.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zm-2 0v2H7V5h10zm-2 14h-2v2H9v-2H7v-2h10v2z" />
+      </svg>
+    </div>
+    <p class="dash-card-label">Compétitions</p>
+    <h1 id="comp-title" class="dash-card-title">Compétitions de Natation</h1>
+    <p class="comp-hero-sub">Parcourez tous les résultats des championnats et compétitions</p>
+  </section>
+
+  <section class="comp-toolbar dash-card" aria-label="Recherche et filtres">
+    <label class="comp-search">
+      <span class="comp-search-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-3-3" stroke-linecap="round" />
+        </svg>
+      </span>
+      <input type="search" class="comp-search-input" placeholder="Rechercher des compétitions..." autocomplete="off" />
+    </label>
+    <div class="comp-years" role="group" aria-label="Filtrer par année">
+      @for (y of ['Toutes', '2024', '2023', '2022', '2021', '2020']; track y) {
+        <button
+          type="button"
+          class="year-pill"
+          [class.is-active]="activeYear() === y"
+          (click)="setYear(y)"
+        >
+          {{ y }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <div class="comp-columns">
+    <section class="season-column dash-card" aria-labelledby="season-2324">
+      <header class="season-head">
+        <h2 id="season-2324" class="season-title">Résultats Saison 2023-2024</h2>
+        <span class="season-badge">compétitions</span>
+      </header>
+      <div class="season-list">
+        <article class="comp-card-item">
+          <div>
+            <h3 class="comp-card-title">Résultats Championnat TC 25m</h3>
+            <p class="comp-card-cat">Championship</p>
+          </div>
+          <button type="button" class="comp-card-btn" (click)="viewResults('Championnat TC 25m')">Voir les résultats</button>
+        </article>
+        <article class="comp-card-item">
+          <div>
+            <h3 class="comp-card-title">Résultats Championnat D'hiver benjamins</h3>
+            <p class="comp-card-cat">Youth Category</p>
+          </div>
+          <button type="button" class="comp-card-btn" (click)="viewResults('Championnat hiver benjamins')">Voir les résultats</button>
+        </article>
+        <article class="comp-card-item">
+          <div>
+            <h3 class="comp-card-title">Coupe interclubs — phase finale</h3>
+            <p class="comp-card-cat">Cup</p>
+          </div>
+          <button type="button" class="comp-card-btn" (click)="viewResults('Coupe interclubs')">Voir les résultats</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="season-column dash-card" aria-labelledby="season-2223">
+      <header class="season-head">
+        <h2 id="season-2223" class="season-title">Résultats Saison 2022-2023</h2>
+        <span class="season-badge">compétitions</span>
+      </header>
+      <div class="season-list">
+        <article class="comp-card-item">
+          <div>
+            <h3 class="comp-card-title">Championnat régional cadets</h3>
+            <p class="comp-card-cat">Championship</p>
+          </div>
+          <button type="button" class="comp-card-btn" (click)="viewResults('Championnat régional cadets')">Voir les résultats</button>
+        </article>
+        <article class="comp-card-item">
+          <div>
+            <h3 class="comp-card-title">Meeting national — bassin 50m</h3>
+            <p class="comp-card-cat">Cup</p>
+          </div>
+          <button type="button" class="comp-card-btn" (click)="viewResults('Meeting national')">Voir les résultats</button>
+        </article>
+        <article class="comp-card-item">
+          <div>
+            <h3 class="comp-card-title">Critérium minimes printemps</h3>
+            <p class="comp-card-cat">Youth Category</p>
+          </div>
+          <button type="button" class="comp-card-btn" (click)="viewResults('Critérium minimes')">Voir les résultats</button>
+        </article>
+      </div>
+    </section>
+  </div>
+</main>

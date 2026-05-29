@@ -1,0 +1,64 @@
+<p class="club-context-banner">
+  Staff technique de <strong>Espérance Sportive de Tunis</strong> — entraîneurs rattachés au club uniquement.
+</p>
+
+<main class="dash-page-main">
+  <div class="dash-page-head">
+    <div>
+      <p class="dash-card-label">Staff</p>
+      <h1 class="dash-card-title">Entraîneurs du club</h1>
+      <p class="dash-page-sub">Encadrement des groupes par catégorie d'âge</p>
+    </div>
+    <button type="button" class="dash-btn dash-btn-primary" (click)="addCoach()">Ajouter un entraîneur</button>
+  </div>
+
+  <section class="dash-card dash-table-card" aria-labelledby="coaches-heading">
+    <div class="panel-head-row">
+      <div>
+        <p class="dash-card-label">Équipe</p>
+        <h2 id="coaches-heading" class="dash-card-title">Liste des entraîneurs</h2>
+      </div>
+      <button type="button" class="dash-btn" (click)="refresh()">Actualiser</button>
+    </div>
+    <div class="table-wrap">
+      <table class="dash-data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Groupes suivis</th>
+            <th>Licence</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Trabelsi</td>
+            <td>Sami</td>
+            <td>sami.trabelsi@est.tn</td>
+            <td>Cadets, Juniors</td>
+            <td>Active</td>
+            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
+          </tr>
+          <tr>
+            <td>Ben Amor</td>
+            <td>Leila</td>
+            <td>leila.benamor@est.tn</td>
+            <td>Benjamins, Minimes</td>
+            <td>Active</td>
+            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
+          </tr>
+          <tr>
+            <td>Gharbi</td>
+            <td>Karim</td>
+            <td>karim.gharbi@est.tn</td>
+            <td>Poussin, A venir</td>
+            <td>Active</td>
+            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

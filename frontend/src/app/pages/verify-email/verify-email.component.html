@@ -1,0 +1,29 @@
+<div class="auth-gate">
+  <div class="auth-gate-shell">
+    <app-auth-brand subtitle="Activation du compte" />
+
+    <section class="dash-card auth-gate-card">
+      <p class="dash-card-label">Vérification</p>
+      <h1 class="dash-card-title auth-gate-title">Vérification email</h1>
+
+      @if (loading()) {
+        <p class="auth-gate-footer">Vérification en cours…</p>
+      } @else if (alertMessage()) {
+        <div
+          class="auth-alert"
+          [class.auth-alert--error]="alertType() === 'error'"
+          [class.auth-alert--success]="alertType() === 'success'"
+          role="alert"
+        >
+          {{ alertMessage() }}
+        </div>
+      }
+
+      @if (!loading()) {
+        <p class="auth-gate-footer">
+          <a routerLink="/login">Retour à la connexion</a>
+        </p>
+      }
+    </section>
+  </div>
+</div>

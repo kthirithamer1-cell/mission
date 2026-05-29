@@ -1,0 +1,108 @@
+<div class="auth-gate">
+  <div class="auth-gate-shell auth-gate-shell--wide">
+    <app-auth-brand subtitle="Créer votre compte" />
+
+    <section class="dash-card auth-gate-card">
+      <p class="dash-card-label">Inscription</p>
+      <h1 class="dash-card-title auth-gate-title">Créer un compte</h1>
+
+      @if (alertMessage()) {
+        <div
+          class="auth-alert"
+          [class.auth-alert--error]="alertType() === 'error'"
+          [class.auth-alert--success]="alertType() === 'success'"
+          role="alert"
+        >
+          {{ alertMessage() }}
+        </div>
+      }
+
+      <form class="ui-form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="auth-form-row">
+          <label class="ui-field">
+            <span>Prénom</span>
+            <input
+              type="text"
+              id="prenom"
+              name="prenom"
+              [(ngModel)]="prenom"
+              autocomplete="given-name"
+              required
+            />
+          </label>
+          <label class="ui-field">
+            <span>Nom</span>
+            <input
+              type="text"
+              id="nom"
+              name="nom"
+              [(ngModel)]="nom"
+              autocomplete="family-name"
+              required
+            />
+          </label>
+        </div>
+        <label class="ui-field">
+          <span>Email</span>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            autocomplete="email"
+            required
+            placeholder="vous@est.tn"
+          />
+        </label>
+        <label class="ui-field">
+          <span>Rôle</span>
+          <select id="user-type" name="userType" [(ngModel)]="userType" required>
+            @for (role of roles; track role.value) {
+              <option [value]="role.value">{{ role.label }}</option>
+            }
+          </select>
+        </label>
+        <label class="ui-field">
+          <span>Mot de passe</span>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="motDePasse"
+            autocomplete="new-password"
+            required
+            minlength="6"
+            placeholder="6 caractères minimum"
+          />
+        </label>
+        <label class="ui-field">
+          <span>Confirmer le mot de passe</span>
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            autocomplete="new-password"
+            required
+          />
+        </label>
+        <button
+          type="submit"
+          class="dash-btn dash-btn-primary auth-gate-submit"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <span class="auth-spinner"></span>Création…
+          } @else {
+            Créer le compte
+          }
+        </button>
+      </form>
+
+      <p class="auth-gate-footer">
+        Déjà un compte ?
+        <a routerLink="/login">Se connecter</a>
+      </p>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="auth-wrapper dashboard-card">
+  <app-auth-brand subtitle="Welcome back" />
+
+  <div class="auth-card">
+    <h2>Dashboard</h2>
+    @if (user(); as u) {
+      <div id="user-info" class="user-info">
+        <strong>{{ u.prenom }} {{ u.nom }}</strong><br />
+        Email: {{ u.email }}<br />
+        Role: {{ u.role }}
+      </div>
+    } @else {
+      <div id="user-info" class="user-info">Loading…</div>
+    }
+    <button type="button" class="btn-primary btn-logout" id="logout-btn" (click)="logout()">
+      Sign out
+    </button>
+  </div>
+</div>

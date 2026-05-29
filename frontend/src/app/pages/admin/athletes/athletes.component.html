@@ -1,0 +1,64 @@
+<p class="club-context-banner">
+  Effectif de <strong>Espérance Sportive de Tunis</strong> — chaque nageur ajouté est automatiquement rattaché à ce club.
+</p>
+
+<main class="dash-page-main">
+  <div class="dash-page-head">
+    <div>
+      <p class="dash-card-label">Effectif</p>
+      <h1 class="dash-card-title">Athlètes du club</h1>
+      <p class="dash-page-sub">Nageurs et licences — club : EST Natation</p>
+    </div>
+    <button type="button" class="dash-btn dash-btn-primary" (click)="refresh()">Actualiser</button>
+  </div>
+
+  <section class="dash-card dash-table-card" aria-labelledby="athletes-heading">
+    <div class="panel-head-row">
+      <div>
+        <p class="dash-card-label">Annuaire</p>
+        <h2 id="athletes-heading" class="dash-card-title">Liste des nageurs</h2>
+      </div>
+      <button type="button" class="dash-btn dash-btn-primary" (click)="addAthlete()">Ajouter un athlète</button>
+    </div>
+    <div class="table-wrap">
+      <table class="dash-data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Catégorie</th>
+            <th>Club</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ben Ali</td>
+            <td>Ahmed</td>
+            <td>ahmed.benali@est.tn</td>
+            <td>CADETS</td>
+            <td>EST</td>
+            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
+          </tr>
+          <tr>
+            <td>Mansouri</td>
+            <td>Sarra</td>
+            <td>sarra.mansouri@est.tn</td>
+            <td>JUNIORS</td>
+            <td>EST</td>
+            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
+          </tr>
+          <tr>
+            <td>Gharbi</td>
+            <td>Youssef</td>
+            <td>youssef.gharbi@est.tn</td>
+            <td>MINIMES</td>
+            <td>EST</td>
+            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
