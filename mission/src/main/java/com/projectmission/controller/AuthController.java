@@ -1,14 +1,12 @@
 package com.projectmission.controller;
 
 import com.projectmission.dto.UtilisateurDTO;
-import com.projectmission.exception.EmailNotVerifiedException;
-import com.projectmission.service.UtilisateurService;
+import com.projectmission.model.Utilisateur;
 import com.projectmission.security.JwtUtil;
+import com.projectmission.service.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,75 +20,67 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UtilisateurDTO dto) {
-        if (dto.getEmail() == null || dto.getMotDePasse() == null) {
-            return ResponseEntity.status(400).body("Email and password are required");
-        }
-        try {
-            UtilisateurDTO utilisateur = utilisateurService.authenticate(dto.getEmail(), dto.getMotDePasse());
-            if (utilisateur != null) {
-                String token = jwtUtil.generateToken(utilisateur.getEmail(), utilisateur.getRole());
-                return ResponseEntity.ok(new LoginResponse(token, utilisateur));
+        Utilisateur utilisateur = utilisateurService.findEntityByEmail(dto.getEmail());
+        if (utilisateur != null && utilisateurService.checkPassword(dto.getMotDePasse(), utilisateur.getMotDePasse())) {
+            if (!utilisateur.isEmailVerified()) {
+                return ResponseEntity.status(403).body(new MessageResponse("Email not verified"));
             }
-            return ResponseEntity.status(401).body("Invalid credentials");
-        } catch (EmailNotVerifiedException ex) {
-            return ResponseEntity.status(403).body(Map.of("message", ex.getMessage()));
+            String token = jwtUtil.generateToken(utilisateur.getEmail(), utilisateur.getRole());
+            return ResponseEntity.ok(new LoginResponse(token, utilisateurService.getByEmail(utilisateur.getEmail())));
         }
+        return ResponseEntity.status(401).body(new MessageResponse("Invalid credentials"));
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         if (request.getUtilisateurDTO() == null) {
-            return ResponseEntity.status(400).body("utilisateurDTO is required");
+            return ResponseEntity.status(400).body(new MessageResponse("utilisateurDTO is required"));
         }
         UtilisateurDTO dto = request.getUtilisateurDTO();
         String userType = request.getUserType();
-        dto.setRole(userType);
+        dto.setRole(userType != null ? userType.toUpperCase() : null);
 
         UtilisateurDTO existingUser = utilisateurService.getByEmail(dto.getEmail());
         if (existingUser != null) {
-            return ResponseEntity.status(400).body("Email already exists");
+            return ResponseEntity.status(400).body(new MessageResponse("Email already exists"));
         }
 
-        try {
-            UtilisateurDTO savedUser = utilisateurService.create(dto);
-            return ResponseEntity.ok(new RegisterResponse(
-                    "Compte créé. Vérifiez votre email pour activer votre compte.",
-                    savedUser
-            ));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(500).body(
-                    Map.of("message", "Impossible d'envoyer l'email de vérification. Vérifiez la configuration SMTP.")
-            );
-        }
+        UtilisateurDTO savedUser = utilisateurService.create(dto);
+        return ResponseEntity.ok(savedUser);
     }
 
     @GetMapping("/verify-email")
-    public ResponseEntity<?> verifyEmail(@RequestParam String token) {
-        try {
-            utilisateurService.verifyEmail(token);
-            return ResponseEntity.ok(Map.of("message", "Email vérifié avec succès. Vous pouvez vous connecter."));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(400).body(Map.of("message", ex.getMessage()));
+    public ResponseEntity<?> verifyEmail(@RequestParam("token") String token) {
+        boolean verified = utilisateurService.verifyEmail(token);
+        if (verified) {
+            return ResponseEntity.ok(new MessageResponse("Email verified successfully"));
         }
+        return ResponseEntity.status(400).body(new MessageResponse("Invalid or expired verification token"));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        utilisateurService.requestPasswordReset(request.getEmail());
+        // Always return 200 to prevent user enumeration
+        return ResponseEntity.ok(new MessageResponse("If that email exists, a reset link has been sent."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        boolean success = utilisateurService.resetPassword(request.getToken(), request.getNewPassword());
+        if (success) {
+            return ResponseEntity.ok(new MessageResponse("Password has been reset successfully."));
+        }
+        return ResponseEntity.status(400).body(new MessageResponse("Invalid or expired reset token"));
     }
 
     @PostMapping("/resend-verification")
-    public ResponseEntity<?> resendVerification(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        if (email == null || email.isBlank()) {
-            return ResponseEntity.status(400).body(Map.of("message", "Email requis."));
+    public ResponseEntity<?> resendVerification(@RequestBody ResendVerificationRequest request) {
+        boolean success = utilisateurService.resendVerification(request.getEmail());
+        if (success) {
+            return ResponseEntity.ok(new MessageResponse("Verification email sent successfully."));
         }
-        try {
-            utilisateurService.resendVerificationEmail(email.trim());
-            return ResponseEntity.ok(Map.of("message", "Email de vérification renvoyé."));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(400).body(Map.of("message", ex.getMessage()));
-        } catch (Exception ex) {
-            return ResponseEntity.status(500).body(
-                    Map.of("message", "Impossible d'envoyer l'email de vérification.")
-            );
-        }
+        return ResponseEntity.status(400).body(new MessageResponse("Email not found or already verified."));
     }
 
     public static class LoginResponse {
@@ -106,19 +96,6 @@ public class AuthController {
         public UtilisateurDTO getUtilisateur() { return utilisateur; }
     }
 
-    public static class RegisterResponse {
-        private String message;
-        private UtilisateurDTO utilisateur;
-
-        public RegisterResponse(String message, UtilisateurDTO utilisateur) {
-            this.message = message;
-            this.utilisateur = utilisateur;
-        }
-
-        public String getMessage() { return message; }
-        public UtilisateurDTO getUtilisateur() { return utilisateur; }
-    }
-
     public static class RegisterRequest {
         private UtilisateurDTO utilisateurDTO;
         private String userType;
@@ -127,5 +104,38 @@ public class AuthController {
         public void setUtilisateurDTO(UtilisateurDTO utilisateurDTO) { this.utilisateurDTO = utilisateurDTO; }
         public String getUserType() { return userType; }
         public void setUserType(String userType) { this.userType = userType; }
+    }
+
+    public static class ForgotPasswordRequest {
+        private String email;
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+    }
+
+    public static class ResetPasswordRequest {
+        private String token;
+        private String newPassword;
+
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
+        public String getNewPassword() { return newPassword; }
+        public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    }
+
+    public static class ResendVerificationRequest {
+        private String email;
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+    }
+
+    public static class MessageResponse {
+        private String message;
+
+        public MessageResponse(String message) { this.message = message; }
+
+        public String getMessage() { return message; }
+        public void setMessage(String message) { this.message = message; }
     }
 }

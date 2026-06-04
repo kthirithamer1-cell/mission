@@ -7,7 +7,11 @@ public class UtilisateurDTO {
     private String email;
     private String motDePasse;
     private String role;
+    private Long clubId;
+    private String clubNom;
+    private Boolean superAdmin;
     private Boolean emailVerified;
+    private String verificationToken;
 
     public UtilisateurDTO() {}
 
@@ -31,7 +35,14 @@ public class UtilisateurDTO {
     public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public Long getClubId() { return clubId; }
+    public void setClubId(Long clubId) { this.clubId = clubId; }
+    public String getClubNom() { return clubNom; }
+    public void setClubNom(String clubNom) { this.clubNom = clubNom; }
+    public Boolean getSuperAdmin() { return superAdmin; }
+    public void setSuperAdmin(Boolean superAdmin) { this.superAdmin = superAdmin; }
     public Boolean getEmailVerified() { return emailVerified; }
     public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+    public String getVerificationToken() { return verificationToken; }
+    public void setVerificationToken(String verificationToken) { this.verificationToken = verificationToken; }
 }
-

@@ -7,6 +7,8 @@ export interface Utilisateur {
   email: string;
   motDePasse?: string;
   role: UserRole | string;
+  clubId?: number;
+  clubNom?: string;
 }
 
 export interface LoginRequest {
@@ -31,4 +33,13 @@ export interface RegisterResponse {
 
 export interface MessageResponse {
   message: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
 }

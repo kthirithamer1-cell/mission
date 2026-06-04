@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  ForgotPasswordRequest,
   LoginRequest,
   LoginResponse,
   MessageResponse,
   RegisterRequest,
   RegisterResponse,
+  ResetPasswordRequest,
   Utilisateur,
 } from '../models/auth.models';
 
@@ -47,6 +49,20 @@ export class AuthService {
     return this.http.post<MessageResponse>(
       `${environment.apiUrl}/auth/resend-verification`,
       { email }
+    );
+  }
+
+  forgotPassword(payload: ForgotPasswordRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(
+      `${environment.apiUrl}/auth/forgot-password`,
+      payload
+    );
+  }
+
+  resetPassword(payload: ResetPasswordRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(
+      `${environment.apiUrl}/auth/reset-password`,
+      payload
     );
   }
 

@@ -1,3 +1,72 @@
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(26, 47, 54, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-container {
+    background: var(--dash-surface);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--dash-border-strong);
+  }
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .modal-title {
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--dash-text);
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--dash-border);
+    padding-bottom: 0.5rem;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .form-group-full {
+    grid-column: span 2;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    color: var(--dash-muted);
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--dash-border);
+    border-radius: var(--radius-sm);
+    background: #fcfdfd;
+    color: var(--dash-text);
+  }
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+</style>
+
 <main class="dash-page-main">
   <div class="dash-page-head">
     <div>
@@ -5,14 +74,14 @@
       <h1 class="dash-card-title">Réservations du club</h1>
       <p class="dash-page-sub">Créneaux réservés sur couloirs disponibles — exploitant piscine partagée · Espérance Sportive de Tunis</p>
     </div>
-    <button type="button" class="dash-btn dash-btn-primary" (click)="requestSlot()">Demander un créneau</button>
+    <button type="button" class="dash-btn dash-btn-primary" (click)="openAddModal()">Demander un créneau</button>
   </div>
 
   <section class="dash-card dash-table-card" aria-labelledby="reservations-heading">
     <div class="panel-head-row">
       <div>
         <p class="dash-card-label">Planning</p>
-        <h2 id="reservations-heading" class="dash-card-title">Couloirs réservés</h2>
+        <h2 id="reservations-heading" class="dash-card-title">Couloirs réservés ({{ reservations().length }})</h2>
       </div>
       <button type="button" class="dash-btn" (click)="refresh()">Actualiser</button>
     </div>
@@ -24,38 +93,95 @@
             <th>Horaire</th>
             <th>Bassin</th>
             <th>Couloirs</th>
+            <th>Club</th>
             <th>Statut</th>
-            <th></th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Mer 21 mai</td>
-            <td>18:00 – 19:45</td>
-            <td>50 m</td>
-            <td>3 – 6</td>
-            <td><span class="rental-badge rental-badge--active">Confirmé</span></td>
-            <td><button type="button" class="dash-btn">Annuler</button></td>
-          </tr>
-          <tr>
-            <td>Ven 23 mai</td>
-            <td>17:30 – 18:30</td>
-            <td>25 m</td>
-            <td>1 – 2</td>
-            <td><span class="rental-badge rental-badge--active">Confirmé</span></td>
-            <td><button type="button" class="dash-btn">Annuler</button></td>
-          </tr>
-          <tr>
-            <td>Sam 24 mai</td>
-            <td>10:00 – 11:00</td>
-            <td>Éveil</td>
-            <td>Zone A</td>
-            <td><span class="rental-badge rental-badge--pending">En attente</span></td>
-            <td><button type="button" class="dash-btn" disabled>—</button></td>
-          </tr>
+          @for (res of reservations(); track res.id) {
+            <tr>
+              <td style="font-weight: 600;">{{ res.date }}</td>
+              <td>{{ res.heureDebut }} – {{ res.heureFin }}</td>
+              <td>{{ res.piscineNom }}</td>
+              <td>Couloirs {{ res.couloirDebut }} à {{ res.couloirFin }}</td>
+              <td>{{ res.clubNom || 'EST' }}</td>
+              <td>
+                <span class="rental-badge" [class.rental-badge--active]="res.statut === 'CONFIRME'" [class.rental-badge--pending]="res.statut === 'EN_ATTENTE'">
+                  {{ res.statut === 'CONFIRME' ? 'Confirmé' : (res.statut === 'EN_ATTENTE' ? 'En attente' : 'Annulé') }}
+                </span>
+              </td>
+              <td>
+                @if (res.statut !== 'ANNULE') {
+                  <button type="button" class="dash-btn dash-btn--sm" style="border-color: #f87171; color: #f87171;" (click)="cancelReservation(res.id!)">Annuler</button>
+                } @else {
+                  <span style="color: var(--dash-muted); font-size: 0.85rem;">—</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--dash-muted);">
+                Aucune réservation de couloir trouvée.
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
     <p class="pool-owner-note">Les autres clubs du site peuvent réserver d'autres couloirs disponibles sur les mêmes créneaux. Contactez l'exploitant pour modifier une réservation.</p>
   </section>
 </main>
+
+<!-- Modal Add -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">Demander un créneau</h3>
+      
+      <form (submit)="saveReservation(); $event.preventDefault();" class="form-grid">
+        <div class="form-group-full form-group">
+          <label for="piscine">Bassin / Piscine</label>
+          <select id="piscine" name="piscine" [(ngModel)]="formReservation().piscineId" required>
+            @for (p of piscines(); track p.id) {
+              <option [value]="p.id">{{ p.nom }} ({{ p.nombreCouloirs }} couloirs - {{ p.longueurMetres }}m)</option>
+            }
+          </select>
+        </div>
+        <div class="form-group-full form-group">
+          <label for="club">Club demandeur</label>
+          <select id="club" name="club" [(ngModel)]="formReservation().clubId" required>
+            @for (c of clubs(); track c.id) {
+              <option [value]="c.id">{{ c.nom }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group-full form-group">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" [(ngModel)]="formReservation().date" required />
+        </div>
+        <div class="form-group">
+          <label for="heureDebut">Heure Début</label>
+          <input type="time" id="heureDebut" name="heureDebut" [(ngModel)]="formReservation().heureDebut" required />
+        </div>
+        <div class="form-group">
+          <label for="heureFin">Heure Fin</label>
+          <input type="time" id="heureFin" name="heureFin" [(ngModel)]="formReservation().heureFin" required />
+        </div>
+        <div class="form-group">
+          <label for="couloirDebut">Premier Couloir</label>
+          <input type="number" id="couloirDebut" name="couloirDebut" [(ngModel)]="formReservation().couloirDebut" min="1" max="8" required />
+        </div>
+        <div class="form-group">
+          <label for="couloirFin">Dernier Couloir</label>
+          <input type="number" id="couloirFin" name="couloirFin" [(ngModel)]="formReservation().couloirFin" min="1" max="8" required />
+        </div>
+
+        <div class="form-group-full form-actions">
+          <button type="button" class="dash-btn" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="dash-btn dash-btn-primary">Enregistrer la demande</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

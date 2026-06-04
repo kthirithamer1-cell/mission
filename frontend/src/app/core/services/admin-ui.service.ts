@@ -37,7 +37,7 @@ export class AdminUiService {
     }
   }
 
-  toast(message: string, type: 'info' | 'success' = 'info'): void {
+  toast(message: string, type: 'info' | 'success' | 'error' = 'info'): void {
     let host = document.getElementById('ui-toast-host');
     if (!host) {
       host = document.createElement('div');

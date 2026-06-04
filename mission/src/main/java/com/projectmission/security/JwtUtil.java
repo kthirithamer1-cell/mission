@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +12,8 @@ import javax.crypto.SecretKey;
 
 @Component
 public class JwtUtil {
-    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final String DEFAULT_SECRET = "projectmission-dev-jwt-secret-key-keep-stable-32-bytes";
+    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes(StandardCharsets.UTF_8));
     private final long EXPIRATION_TIME = 86400000; // 1 day
 
     public String generateToken(String username, String role) {
@@ -59,4 +61,3 @@ public class JwtUtil {
         return expiration.before(new Date());
     }
 }
-

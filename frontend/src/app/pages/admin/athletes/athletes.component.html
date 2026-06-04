@@ -1,5 +1,74 @@
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(26, 47, 54, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-container {
+    background: var(--dash-surface);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--dash-border-strong);
+  }
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .modal-title {
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--dash-text);
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--dash-border);
+    padding-bottom: 0.5rem;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .form-group-full {
+    grid-column: span 2;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    color: var(--dash-muted);
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--dash-border);
+    border-radius: var(--radius-sm);
+    background: #fcfdfd;
+    color: var(--dash-text);
+  }
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+</style>
+
 <p class="club-context-banner">
-  Effectif de <strong>Espérance Sportive de Tunis</strong> — chaque nageur ajouté est automatiquement rattaché à ce club.
+  Effectif de <strong>Aquapulse</strong> — chaque nageur ajouté est automatiquement rattaché à ce club.
 </p>
 
 <main class="dash-page-main">
@@ -7,18 +76,18 @@
     <div>
       <p class="dash-card-label">Effectif</p>
       <h1 class="dash-card-title">Athlètes du club</h1>
-      <p class="dash-page-sub">Nageurs et licences — club : EST Natation</p>
+      <p class="dash-page-sub">Nageurs et licences — club : Aquapulse</p>
     </div>
-    <button type="button" class="dash-btn dash-btn-primary" (click)="refresh()">Actualiser</button>
+    <button type="button" class="dash-btn" (click)="refresh()">Actualiser</button>
   </div>
 
   <section class="dash-card dash-table-card" aria-labelledby="athletes-heading">
     <div class="panel-head-row">
       <div>
         <p class="dash-card-label">Annuaire</p>
-        <h2 id="athletes-heading" class="dash-card-title">Liste des nageurs</h2>
+        <h2 id="athletes-heading" class="dash-card-title">Liste des nageurs ({{ athletes().length }})</h2>
       </div>
-      <button type="button" class="dash-btn dash-btn-primary" (click)="addAthlete()">Ajouter un athlète</button>
+      <button type="button" class="dash-btn dash-btn-primary" (click)="openAddModal()">Ajouter un athlète</button>
     </div>
     <div class="table-wrap">
       <table class="dash-data-table">
@@ -27,38 +96,103 @@
             <th>Nom</th>
             <th>Prénom</th>
             <th>Email</th>
+            <th>Âge / Sexe</th>
             <th>Catégorie</th>
             <th>Club</th>
-            <th></th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Ben Ali</td>
-            <td>Ahmed</td>
-            <td>ahmed.benali@est.tn</td>
-            <td>CADETS</td>
-            <td>EST</td>
-            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
-          </tr>
-          <tr>
-            <td>Mansouri</td>
-            <td>Sarra</td>
-            <td>sarra.mansouri@est.tn</td>
-            <td>JUNIORS</td>
-            <td>EST</td>
-            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
-          </tr>
-          <tr>
-            <td>Gharbi</td>
-            <td>Youssef</td>
-            <td>youssef.gharbi@est.tn</td>
-            <td>MINIMES</td>
-            <td>EST</td>
-            <td><button type="button" class="dash-btn dash-btn--sm">Modifier</button></td>
-          </tr>
+          @for (athlete of athletes(); track athlete.id) {
+            <tr>
+              <td style="font-weight: 600;">{{ athlete.nom }}</td>
+              <td>{{ athlete.prenom }}</td>
+              <td>{{ athlete.email }}</td>
+              <td>{{ athlete.age }} ans ({{ athlete.sexe }})</td>
+              <td><span class="rental-badge rental-badge--active">{{ athlete.categorie }}</span></td>
+              <td>{{ athlete.clubNom || 'EST' }}</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button type="button" class="dash-btn dash-btn--sm" (click)="openEditModal(athlete)">Modifier</button>
+                  <button type="button" class="dash-btn dash-btn--sm" style="border-color: #f87171; color: #f87171;" (click)="deleteAthlete(athlete.id!)">Supprimer</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--dash-muted);">
+                Aucun athlète trouvé.
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
   </section>
 </main>
+
+<!-- Modal Add/Edit -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">{{ isEditMode() ? 'Modifier l\'athlète' : 'Ajouter un athlète' }}</h3>
+      
+      <form (submit)="saveAthlete(); $event.preventDefault();" class="form-grid">
+        <div class="form-group">
+          <label for="nom">Nom</label>
+          <input type="text" id="nom" name="nom" [(ngModel)]="formAthlete().nom" required />
+        </div>
+        <div class="form-group">
+          <label for="prenom">Prénom</label>
+          <input type="text" id="prenom" name="prenom" [(ngModel)]="formAthlete().prenom" required />
+        </div>
+        <div class="form-group-full form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" [(ngModel)]="formAthlete().email" required />
+        </div>
+        @if (!isEditMode()) {
+          <div class="form-group-full form-group">
+            <label for="motDePasse">Mot de passe</label>
+            <input type="password" id="motDePasse" name="motDePasse" [(ngModel)]="formAthlete().motDePasse" required />
+          </div>
+        }
+        <div class="form-group">
+          <label for="age">Âge</label>
+          <input type="number" id="age" name="age" [(ngModel)]="formAthlete().age" />
+        </div>
+        <div class="form-group">
+          <label for="sexe">Sexe</label>
+          <select id="sexe" name="sexe" [(ngModel)]="formAthlete().sexe">
+            <option value="M">Masculin</option>
+            <option value="F">Féminin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="categorie">Catégorie</label>
+          <select id="categorie" name="categorie" [(ngModel)]="formAthlete().categorie">
+            <option value="A VENIR">A VENIR</option>
+            <option value="POUSSIN">POUSSIN</option>
+            <option value="BENJAMINS">BENJAMINS</option>
+            <option value="MINIMES">MINIMES</option>
+            <option value="CADETS">CADETS</option>
+            <option value="JUNIORS">JUNIORS</option>
+            <option value="SENIORS">SENIORS</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="club">Club</label>
+          <select id="club" name="club" [(ngModel)]="formAthlete().clubId">
+            @for (club of clubs(); track club.id) {
+              <option [value]="club.id">{{ club.nom }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group-full form-actions">
+          <button type="button" class="dash-btn" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="dash-btn dash-btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

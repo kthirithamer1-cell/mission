@@ -1,15 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Chart } from 'chart.js';
-
-const CATEGORIES = [
-  'A VENIR',
-  'POUSSIN',
-  'BENJAMINS',
-  'MINIMES',
-  'CADETS',
-  'JUNIORS',
-  'SENIORS',
-];
+import { DashboardStats } from '../models/app.models';
 
 const COLORS = [
   '#818cf8',
@@ -21,7 +12,6 @@ const COLORS = [
   '#f87171',
 ];
 
-const PIE_COUNTS = [2, 4, 5, 4, 3, 3, 3];
 const LINE_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'];
 
 @Injectable({ providedIn: 'root' })
@@ -29,17 +19,21 @@ export class AdminChartsService {
   private pieChart: Chart<'pie'> | null = null;
   private lineChart: Chart<'line'> | null = null;
 
-  init(pieCanvas: HTMLCanvasElement, lineCanvas: HTMLCanvasElement, legendEl: HTMLElement): void {
+  init(pieCanvas: HTMLCanvasElement, lineCanvas: HTMLCanvasElement, legendEl: HTMLElement, stats: DashboardStats): void {
     this.destroy();
     const c = this.chartColors();
+
+    const categories = Object.keys(stats.repartitionCategories || {});
+    const counts = Object.values(stats.repartitionCategories || {});
+
     this.pieChart = new Chart(pieCanvas, {
       type: 'pie',
       data: {
-        labels: CATEGORIES,
+        labels: categories,
         datasets: [
           {
-            data: PIE_COUNTS,
-            backgroundColor: COLORS,
+            data: counts,
+            backgroundColor: COLORS.slice(0, categories.length),
             borderColor: c.border,
             borderWidth: 2,
           },
@@ -52,16 +46,16 @@ export class AdminChartsService {
       },
     });
 
-    legendEl.innerHTML = CATEGORIES.map(
+    legendEl.innerHTML = categories.map(
       (label, i) =>
-        `<span class="pie-legend-item"><span class="pie-legend-dot" style="background:${COLORS[i]}"></span>${label} <em>${PIE_COUNTS[i]}</em></span>`
+        `<span class="pie-legend-item"><span class="pie-legend-dot" style="background:${COLORS[i % COLORS.length]}"></span>${label} <em>${counts[i]}</em></span>`
     ).join('');
 
-    const datasets = CATEGORIES.map((cat, i) => ({
+    const datasets = Object.keys(stats.evolutionParCategorie || {}).map((cat, i) => ({
       label: cat,
-      data: this.lineDataFor(cat),
-      borderColor: COLORS[i],
-      backgroundColor: COLORS[i] + '33',
+      data: stats.evolutionParCategorie[cat] || [],
+      borderColor: COLORS[i % COLORS.length],
+      backgroundColor: COLORS[i % COLORS.length] + '33',
       tension: 0.35,
       fill: false,
     }));
@@ -91,19 +85,6 @@ export class AdminChartsService {
     this.lineChart?.destroy();
     this.pieChart = null;
     this.lineChart = null;
-  }
-
-  private lineDataFor(cat: string): number[] {
-    const data: Record<string, number[]> = {
-      'A VENIR': [1, 1, 2, 2, 2, 2],
-      POUSSIN: [2, 3, 3, 4, 4, 4],
-      BENJAMINS: [3, 4, 4, 5, 5, 5],
-      MINIMES: [2, 3, 3, 4, 4, 4],
-      CADETS: [2, 2, 3, 3, 3, 3],
-      JUNIORS: [2, 2, 2, 3, 3, 3],
-      SENIORS: [2, 2, 3, 3, 3, 3],
-    };
-    return data[cat] ?? [0, 0, 0, 0, 0, 0];
   }
 
   private chartColors() {

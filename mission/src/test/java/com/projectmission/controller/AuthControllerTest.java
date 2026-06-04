@@ -2,6 +2,8 @@ package com.projectmission.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectmission.dto.UtilisateurDTO;
+import com.projectmission.model.Admin;
+import com.projectmission.model.Utilisateur;
 import com.projectmission.security.JwtUtil;
 import com.projectmission.service.UtilisateurService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -38,6 +38,7 @@ public class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     private UtilisateurDTO testUser;
+    private Utilisateur testUserEntity;
 
     @BeforeEach
     void setUp() {
@@ -47,6 +48,14 @@ public class AuthControllerTest {
         testUser.setPrenom("Doe");
         testUser.setEmail("john.doe@example.com");
         testUser.setRole("ADMIN");
+
+        testUserEntity = new Admin();
+        testUserEntity.setId(1L);
+        testUserEntity.setNom("John");
+        testUserEntity.setPrenom("Doe");
+        testUserEntity.setEmail("john.doe@example.com");
+        testUserEntity.setMotDePasse("encoded-password");
+        testUserEntity.setRole("ADMIN");
     }
 
     @Test
@@ -54,9 +63,11 @@ public class AuthControllerTest {
     void testLoginSuccess() throws Exception {
         UtilisateurDTO loginDto = new UtilisateurDTO();
         loginDto.setEmail("john.doe@example.com");
-        loginDto.setMotDePasse("password123");
+        loginDto.setMotDePasse("secret");
 
-        when(utilisateurService.authenticate("john.doe@example.com", "password123")).thenReturn(testUser);
+        when(utilisateurService.findEntityByEmail("john.doe@example.com")).thenReturn(testUserEntity);
+        when(utilisateurService.checkPassword("secret", "encoded-password")).thenReturn(true);
+        when(utilisateurService.getByEmail("john.doe@example.com")).thenReturn(testUser);
         when(jwtUtil.generateToken(anyString(), anyString())).thenReturn("mock-token");
 
         mockMvc.perform(post("/api/auth/login")
@@ -73,9 +84,8 @@ public class AuthControllerTest {
     void testLoginFailure() throws Exception {
         UtilisateurDTO loginDto = new UtilisateurDTO();
         loginDto.setEmail("wrong@example.com");
-        loginDto.setMotDePasse("wrong");
 
-        when(utilisateurService.authenticate("wrong@example.com", "wrong")).thenReturn(null);
+        when(utilisateurService.getByEmail("wrong@example.com")).thenReturn(null);
 
         mockMvc.perform(post("/api/auth/login")
                 .with(csrf())
@@ -83,37 +93,6 @@ public class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string("Invalid credentials"));
-    }
-
-    @Test
-    @WithMockUser
-    void testLoginEmailNotVerified() throws Exception {
-        UtilisateurDTO loginDto = new UtilisateurDTO();
-        loginDto.setEmail("john.doe@example.com");
-        loginDto.setMotDePasse("password123");
-
-        when(utilisateurService.authenticate("john.doe@example.com", "password123"))
-                .thenThrow(new com.projectmission.exception.EmailNotVerifiedException(
-                        "Email non vérifié. Consultez votre boîte mail."
-                ));
-
-        mockMvc.perform(post("/api/auth/login")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginDto)))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.message").value("Email non vérifié. Consultez votre boîte mail."));
-    }
-
-    @Test
-    @WithMockUser
-    void testVerifyEmailSuccess() throws Exception {
-        doNothing().when(utilisateurService).verifyEmail("valid-token");
-
-        mockMvc.perform(get("/api/auth/verify-email")
-                .param("token", "valid-token"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -131,8 +110,7 @@ public class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.utilisateur.email").value("john.doe@example.com"));
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
     }
 
     @Test

@@ -6,25 +6,25 @@
       <a class="stat-tile is-clickable" routerLink="/athletes" style="text-decoration: none; color: inherit">
         <div class="stat-tile-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></div>
         <p class="stat-tile-label">Nageurs du club</p>
-        <p class="stat-tile-value">24</p>
+        <p class="stat-tile-value">{{ stats()?.nageursCount ?? 0 }}</p>
         <p class="stat-tile-foot">Effectif actif</p>
       </a>
       <a class="stat-tile is-clickable" routerLink="/entraineurs" style="text-decoration: none; color: inherit">
         <div class="stat-tile-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg></div>
         <p class="stat-tile-label">Entraîneurs</p>
-        <p class="stat-tile-value">3</p>
+        <p class="stat-tile-value">{{ stats()?.entraineursCount ?? 0 }}</p>
         <p class="stat-tile-foot">Staff club</p>
       </a>
       <a class="stat-tile is-clickable" routerLink="/reservations" style="text-decoration: none; color: inherit">
         <div class="stat-tile-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20v2H2v-2zm2-4h16v2H4v-2zm2-4h12v2H6V6zm2-4h8v2H8V2z" /></svg></div>
         <p class="stat-tile-label">Couloirs réservés</p>
-        <p class="stat-tile-value">6</p>
+        <p class="stat-tile-value">{{ stats()?.couloirsReserves ?? 0 }}</p>
         <p class="stat-tile-foot">Cette semaine</p>
       </a>
       <a class="stat-tile is-clickable" routerLink="/reservations" style="text-decoration: none; color: inherit">
         <div class="stat-tile-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z" /></svg></div>
         <p class="stat-tile-label">Créneaux</p>
-        <p class="stat-tile-value">4</p>
+        <p class="stat-tile-value">{{ stats()?.creneauxAVenir ?? 0 }}</p>
         <p class="stat-tile-foot neutral">À venir (7 j)</p>
       </a>
     </section>
@@ -37,7 +37,7 @@
         </div>
         <a routerLink="/athletes" class="dash-btn" style="text-decoration: none;">Voir les nageurs</a>
       </div>
-      <p class="dash-page-sub" style="margin: 0.5rem 0 0;">Répartition (24 nageurs) et évolution sur 6 mois — toutes catégories sur le même graphique</p>
+      <p class="dash-page-sub" style="margin: 0.5rem 0 0;">Répartition ({{ stats()?.nageursCount ?? 0 }} nageurs) et évolution sur 6 mois — toutes catégories sur le même graphique</p>
       <div class="charts-split">
         <div class="chart-panel chart-panel--pie">
           <p class="dash-card-label" style="margin: 0;">Répartition</p>
@@ -61,27 +61,19 @@
           <p class="dash-page-sub" style="margin-bottom: 1rem;">Créneaux attribués sur les bassins municipaux (plusieurs clubs sur le même site).</p>
 
           <div class="rental-list" aria-label="Bassins et couloirs">
-            <div class="rental-row">
-              <div class="rental-row-main">
-                <p class="rental-row-title">Bassin 50 m — Couloirs 3 à 6</p>
-                <p class="rental-row-meta">Mer 18:00–19:45 · 4 couloirs · Piscine olympique Tunis</p>
+            @for (res of reservations(); track res.id) {
+              <div class="rental-row">
+                <div class="rental-row-main">
+                  <p class="rental-row-title">{{ res.piscineNom }} — Couloirs {{ res.couloirDebut }} à {{ res.couloirFin }}</p>
+                  <p class="rental-row-meta">{{ res.date }} · {{ res.heureDebut }}–{{ res.heureFin }} · {{ res.clubNom }}</p>
+                </div>
+                <span class="rental-badge" [class.rental-badge--active]="res.statut === 'CONFIRME'" [class.rental-badge--pending]="res.statut === 'EN_ATTENTE'">
+                  {{ res.statut === 'CONFIRME' ? 'Confirmé' : (res.statut === 'EN_ATTENTE' ? 'En attente' : 'Annulé') }}
+                </span>
               </div>
-              <span class="rental-badge rental-badge--active">Confirmé</span>
-            </div>
-            <div class="rental-row">
-              <div class="rental-row-main">
-                <p class="rental-row-title">Bassin 25 m — Couloirs 1 à 2</p>
-                <p class="rental-row-meta">Ven 17:30–18:30 · 2 couloirs</p>
-              </div>
-              <span class="rental-badge rental-badge--active">Confirmé</span>
-            </div>
-            <div class="rental-row">
-              <div class="rental-row-main">
-                <p class="rental-row-title">Piscine éveil — Créneau découverte</p>
-                <p class="rental-row-meta">Sam 10:00–11:00 · 1 zone</p>
-              </div>
-              <span class="rental-badge rental-badge--pending">En attente</span>
-            </div>
+            } @empty {
+              <p class="requests-empty">Aucune réservation de couloir enregistrée</p>
+            }
           </div>
           <p class="pool-owner-note">L'exploitant de la piscine valide chaque demande. Votre club ne possède pas le bassin — vous réservez des couloirs disponibles.</p>
           <div style="margin-top: 1rem;">
@@ -93,57 +85,46 @@
           <section class="dash-card">
             <p class="dash-card-label">Séance du club</p>
             <h2 class="dash-card-title" style="font-size: 1.1rem; margin-bottom: 1rem;">Prochain créneau disponible</h2>
-            <div class="detail-grid">
-              <div class="detail-item">
-                <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" /></svg></div>
-                <div><p class="detail-item-label">Horaire</p><p class="detail-item-value">Mer 18:00–19:45</p></div>
+            @if (upcomingSeance(); as seance) {
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" /></svg></div>
+                  <div><p class="detail-item-label">Horaire / Séance</p><p class="detail-item-value">{{ seance.titre }} ({{ seance.date }})</p></div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20v2H2v-2zm2-4h16v2H4v-2zm2-4h12v2H6V6zm2-4h8v2H8V2z" /></svg></div>
+                  <div><p class="detail-item-label">Heure</p><p class="detail-item-value">{{ seance.heureDebut }}–{{ seance.heureFin }}</p></div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg></div>
+                  <div><p class="detail-item-label">Club</p><p class="detail-item-value">{{ seance.clubNom }}</p></div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></div>
+                  <div><p class="detail-item-label">Entraîneur</p><p class="detail-item-value">{{ seance.entraineurNom }}</p></div>
+                </div>
               </div>
-              <div class="detail-item">
-                <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20v2H2v-2zm2-4h16v2H4v-2zm2-4h12v2H6V6zm2-4h8v2H8V2z" /></svg></div>
-                <div><p class="detail-item-label">Bassin</p><p class="detail-item-value">50 m (partagé)</p></div>
-              </div>
-              <div class="detail-item">
-                <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg></div>
-                <div><p class="detail-item-label">Couloirs attribués</p><p class="detail-item-value">3, 4, 5, 6</p></div>
-              </div>
-              <div class="detail-item">
-                <div class="detail-item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></div>
-                <div><p class="detail-item-label">Nageurs EST</p><p class="detail-item-value">22 présents</p></div>
-              </div>
-            </div>
+            } @else {
+              <p class="requests-empty">Aucun créneau planifié</p>
+            }
           </section>
 
           <section class="dash-card">
             <p class="dash-card-label">Performance club</p>
             <h2 class="dash-card-title" style="font-size: 1.1rem; margin-bottom: 0.75rem;">Records EST</h2>
             <div class="chrono-records-row" aria-label="Meilleurs temps du club">
-              <div class="chrono-record-item">
-                <p class="chrono-unit">50 m nage libre</p>
-                <div class="chrono-chip"><span class="chrono-value">24.12</span></div>
-              </div>
-              <div class="chrono-record-item">
-                <p class="chrono-unit">100 m nage libre</p>
-                <div class="chrono-chip"><span class="chrono-value">52.45</span></div>
-              </div>
-              <div class="chrono-record-item">
-                <p class="chrono-unit">100 m papillon</p>
-                <div class="chrono-chip"><span class="chrono-value">54.82</span></div>
-              </div>
-              <div class="chrono-record-item">
-                <p class="chrono-unit">100 m dos</p>
-                <div class="chrono-chip"><span class="chrono-value">58.90</span></div>
-              </div>
-              <div class="chrono-record-item">
-                <p class="chrono-unit">100 m brasse</p>
-                <div class="chrono-chip"><span class="chrono-value">1:05.20</span></div>
-              </div>
-              <div class="chrono-record-item">
-                <p class="chrono-unit">200 m 4 nages</p>
-                <div class="chrono-chip"><span class="chrono-value">2:18.44</span></div>
-              </div>
+              @for (rec of stats()?.records; track rec.epreuve) {
+                <div class="chrono-record-item">
+                  <p class="chrono-unit">{{ rec.epreuve }}</p>
+                  <div class="chrono-chip"><span class="chrono-value">{{ rec.temps }}</span></div>
+                  <p style="font-size: 0.75rem; color: var(--dash-muted); margin-top: 0.25rem;">{{ rec.nageurNom }} ({{ rec.categorie }})</p>
+                </div>
+              } @empty {
+                <p class="requests-empty">Aucun record enregistré</p>
+              }
             </div>
             <div class="chrono-display" style="padding-top: 0.5rem;">
-              <button type="button" class="dash-btn-link" data-ui-action="chrono-detail">Voir le palmarès →</button>
+              <a routerLink="/resultats" class="dash-btn-link" style="text-decoration: none;">Voir le palmarès →</a>
             </div>
           </section>
         </div>
@@ -155,11 +136,23 @@
               <h2 id="requests-title" class="dash-card-title">Réservations en attente</h2>
             </div>
             <div class="dash-actions">
-              <button type="button" class="dash-btn" data-ui-action="request-slot">Demander un créneau</button>
-              <button type="button" class="dash-btn dash-btn-primary" data-ui-action="refresh">Actualiser</button>
+              <button type="button" class="dash-btn" (click)="requestSlot()">Demander un créneau</button>
+              <button type="button" class="dash-btn dash-btn-primary" (click)="refresh()">Actualiser</button>
             </div>
           </div>
-          <p class="requests-empty">Aucune demande en attente de validation par l'exploitant</p>
+          <div class="rental-list" style="margin-top: 1rem;">
+            @for (res of pendingReservations(); track res.id) {
+              <div class="rental-row">
+                <div class="rental-row-main">
+                  <p class="rental-row-title">{{ res.piscineNom }} — Couloirs {{ res.couloirDebut }} à {{ res.couloirFin }}</p>
+                  <p class="rental-row-meta">{{ res.date }} · {{ res.heureDebut }}–{{ res.heureFin }} · {{ res.clubNom }}</p>
+                </div>
+                <span class="rental-badge rental-badge--pending">En attente</span>
+              </div>
+            } @empty {
+              <p class="requests-empty">Aucune demande en attente de validation par l'exploitant</p>
+            }
+          </div>
         </section>
       </div>
 
@@ -171,9 +164,9 @@
           <div class="gauge-wrap">
             <p class="gauge-label">Quota couloirs cette semaine (EST)</p>
             <div class="gauge-bar"><div class="gauge-fill" style="width: 50%;"></div></div>
-            <p class="gauge-pct">6 h réservées / 12 h quota</p>
+            <p class="gauge-pct">{{ stats()?.couloirsReserves ?? 0 }} h réservées / 12 h quota</p>
           </div>
-          <button type="button" class="dash-btn dash-btn-primary" style="width: 100%; margin-top: 1rem;" data-ui-action="request-slot">Demander un créneau</button>
+          <button type="button" class="dash-btn dash-btn-primary" style="width: 100%; margin-top: 1rem;" (click)="requestSlot()">Demander un créneau</button>
         </section>
 
         <section class="dash-card">
