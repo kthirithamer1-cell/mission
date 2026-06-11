@@ -91,6 +91,13 @@ export const routes: Routes = [
             (m) => m.CoachProfileComponent
           ),
       },
+      {
+        path: 'mon-planning',
+        loadComponent: () =>
+          import('./pages/coach/coach-planning/coach-planning.component').then(
+            (m) => m.CoachPlanningComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'login' },

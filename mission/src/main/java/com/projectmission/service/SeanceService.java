@@ -1,6 +1,7 @@
 package com.projectmission.service;
 
 import com.projectmission.dto.SeanceDTO;
+import com.projectmission.dto.UtilisateurDTO;
 import com.projectmission.mapper.SeanceMapper;
 import com.projectmission.model.Seance;
 import com.projectmission.repository.SeanceRepository;
@@ -56,6 +57,13 @@ public class SeanceService {
             }
             return mapper.toDTO(repository.save(existing));
         }).orElse(null);
+    }
+
+    public List<SeanceDTO> getMesSeances() {
+        UtilisateurDTO user = currentUserService.getCurrentUser();
+        if (user == null || user.getId() == null) return List.of();
+        return repository.findByEntraineur_Id(user.getId())
+                .stream().map(mapper::toDTO).collect(Collectors.toList());
     }
 
     public void delete(Long id) {

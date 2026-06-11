@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SeanceRepository extends JpaRepository<Seance, Long> {
     List<Seance> findByClub_Id(Long clubId);
+    List<Seance> findByEntraineur_Id(Long entraineurId);
 }
