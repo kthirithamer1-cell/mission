@@ -5,6 +5,7 @@ public class NageurDTO extends UtilisateurDTO {
     private String sexe;
     private String categorie;
     private Long clubId;
+    private String clubNom;
     private Long licenceId;
 
     public Integer getAge() { return age; }
@@ -15,6 +16,8 @@ public class NageurDTO extends UtilisateurDTO {
     public void setCategorie(String categorie) { this.categorie = categorie; }
     public Long getClubId() { return clubId; }
     public void setClubId(Long clubId) { this.clubId = clubId; }
+    public String getClubNom() { return clubNom; }
+    public void setClubNom(String clubNom) { this.clubNom = clubNom; }
     public Long getLicenceId() { return licenceId; }
     public void setLicenceId(Long licenceId) { this.licenceId = licenceId; }
 }
