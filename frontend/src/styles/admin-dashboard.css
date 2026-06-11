@@ -2331,7 +2331,6 @@ body[data-theme="light"] .auth-alert--success {
   background-clip: text; color: transparent; opacity: 1;
 }
 .shell-coach .dash-nav-links a:hover { color: var(--coach-2); }
-.shell-coach .dash-nav-links a.active { color: #fff; }
 .shell-coach .page-title, .shell-coach .cp-page-title {
   background: var(--coach-grad); -webkit-background-clip: text;
   background-clip: text; color: transparent;
