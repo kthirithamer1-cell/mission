@@ -84,6 +84,13 @@ export const routes: Routes = [
             (m) => m.ResultatsComponent
           ),
       },
+      {
+        path: 'mon-profil',
+        loadComponent: () =>
+          import('./pages/coach/coach-profile/coach-profile.component').then(
+            (m) => m.CoachProfileComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'login' },

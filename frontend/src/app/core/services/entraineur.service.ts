@@ -27,4 +27,12 @@ export class EntraineurService {
   delete(id: number): Observable<string> {
     return this.http.delete(`${environment.apiUrl}/entraineurs/${id}`, { responseType: 'text' });
   }
+
+  getMe(): Observable<Entraineur> {
+    return this.http.get<Entraineur>(`${environment.apiUrl}/entraineurs/me`);
+  }
+
+  updateMe(entraineur: Partial<Entraineur>): Observable<Entraineur> {
+    return this.http.put<Entraineur>(`${environment.apiUrl}/entraineurs/me`, entraineur);
+  }
 }

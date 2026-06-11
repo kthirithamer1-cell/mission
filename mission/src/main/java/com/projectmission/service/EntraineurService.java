@@ -65,4 +65,22 @@ public class EntraineurService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+
+    public EntraineurDTO getMe() {
+        String email = currentUserService.getEmail();
+        return repository.findByEmail(email).map(mapper::toDTO).orElse(null);
+    }
+
+    public EntraineurDTO updateMe(EntraineurDTO dto) {
+        String email = currentUserService.getEmail();
+        return repository.findByEmail(email).map(existing -> {
+            existing.setNom(dto.getNom());
+            existing.setPrenom(dto.getPrenom());
+            existing.setGroupes(dto.getGroupes());
+            if (dto.getMotDePasse() != null && !dto.getMotDePasse().isBlank()) {
+                existing.setMotDePasse(passwordEncoder.encode(dto.getMotDePasse()));
+            }
+            return mapper.toDTO(repository.save(existing));
+        }).orElse(null);
+    }
 }
