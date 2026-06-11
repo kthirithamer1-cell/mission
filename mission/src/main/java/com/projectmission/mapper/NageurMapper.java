@@ -28,7 +28,10 @@ public class NageurMapper {
         dto.setAge(entity.getAge());
         dto.setSexe(entity.getSexe());
         dto.setCategorie(entity.getCategorie());
-        dto.setClubId(entity.getClub() != null ? entity.getClub().getId() : null);
+        if (entity.getClub() != null) {
+            dto.setClubId(entity.getClub().getId());
+            dto.setClubNom(entity.getClub().getNom());
+        }
         dto.setLicenceId(entity.getLicence() != null ? entity.getLicence().getId() : null);
         return dto;
     }

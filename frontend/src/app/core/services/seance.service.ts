@@ -12,6 +12,10 @@ export class SeanceService {
     return this.http.get<Seance[]>(`${environment.apiUrl}/seances`);
   }
 
+  getMesSeances(): Observable<Seance[]> {
+    return this.http.get<Seance[]>(`${environment.apiUrl}/seances/mes-seances`);
+  }
+
   getById(id: number): Observable<Seance> {
     return this.http.get<Seance>(`${environment.apiUrl}/seances/${id}`);
   }

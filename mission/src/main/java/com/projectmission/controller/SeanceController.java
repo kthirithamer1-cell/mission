@@ -19,6 +19,11 @@ public class SeanceController {
         return ResponseEntity.ok(service.getAllForCurrentUser());
     }
 
+    @GetMapping("/mes-seances")
+    public ResponseEntity<List<SeanceDTO>> getMesSeances() {
+        return ResponseEntity.ok(service.getMesSeances());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         SeanceDTO dto = service.getById(id);

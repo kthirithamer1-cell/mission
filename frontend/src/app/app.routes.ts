@@ -84,6 +84,34 @@ export const routes: Routes = [
             (m) => m.ResultatsComponent
           ),
       },
+      {
+        path: 'mon-profil',
+        loadComponent: () =>
+          import('./pages/coach/coach-profile/coach-profile.component').then(
+            (m) => m.CoachProfileComponent
+          ),
+      },
+      {
+        path: 'mon-planning',
+        loadComponent: () =>
+          import('./pages/coach/coach-planning/coach-planning.component').then(
+            (m) => m.CoachPlanningComponent
+          ),
+      },
+      {
+        path: 'presences',
+        loadComponent: () =>
+          import('./pages/coach/coach-presence/coach-presence.component').then(
+            (m) => m.CoachPresenceComponent
+          ),
+      },
+      {
+        path: 'nageur-profil',
+        loadComponent: () =>
+          import('./pages/nageur/nageur-profile/nageur-profile.component').then(
+            (m) => m.NageurProfileComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'login' },

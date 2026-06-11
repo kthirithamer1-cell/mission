@@ -5,6 +5,7 @@ export interface Nageur extends Utilisateur {
   sexe?: string;
   categorie?: string;
   clubId?: number;
+  clubNom?: string;
   licenceId?: number;
 }
 

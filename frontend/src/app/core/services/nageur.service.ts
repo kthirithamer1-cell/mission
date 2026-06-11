@@ -27,4 +27,12 @@ export class NageurService {
   delete(id: number): Observable<string> {
     return this.http.delete(`${environment.apiUrl}/nageurs/${id}`, { responseType: 'text' });
   }
+
+  getMe(): Observable<Nageur> {
+    return this.http.get<Nageur>(`${environment.apiUrl}/nageurs/me`);
+  }
+
+  updateMe(nageur: Partial<Nageur>): Observable<Nageur> {
+    return this.http.put<Nageur>(`${environment.apiUrl}/nageurs/me`, nageur);
+  }
 }
