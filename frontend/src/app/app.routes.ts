@@ -98,6 +98,13 @@ export const routes: Routes = [
             (m) => m.CoachPlanningComponent
           ),
       },
+      {
+        path: 'presences',
+        loadComponent: () =>
+          import('./pages/coach/coach-presence/coach-presence.component').then(
+            (m) => m.CoachPresenceComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'login' },
