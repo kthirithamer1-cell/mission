@@ -3003,3 +3003,29 @@ body[data-theme="light"] .dash-role-dot { border-color: var(--dash-surface, #fff
   .pres-bulk-btns { margin-left: 0; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   NAGEUR workspace accent — emerald green palette
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --nageur-1: #059669;
+  --nageur-2: #10b981;
+  --nageur-3: #34d399;
+  --nageur-grad: linear-gradient(135deg, #064e3b 0%, #059669 55%, #34d399 100%);
+}
+
+.shell-nageur .dash-header { border-bottom-color: transparent; position: relative; }
+.shell-nageur .dash-header::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px; background: var(--nageur-grad);
+}
+.shell-nageur .dash-brand-sub {
+  background: var(--nageur-grad); -webkit-background-clip: text;
+  background-clip: text; color: transparent; opacity: 1;
+}
+.shell-nageur .dash-nav-links a:hover { color: var(--nageur-2); }
+[data-role="role-nageur"] .dash-nav-links a.active::after {
+  background: var(--nageur-grad) !important;
+  box-shadow: 0 0 8px rgba(16,185,129,0.5) !important;
+}
+

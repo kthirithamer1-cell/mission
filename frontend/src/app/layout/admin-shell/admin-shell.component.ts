@@ -33,6 +33,10 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     return this.currentUser()?.role === 'ENTRAINEUR';
   }
 
+  isNageur(): boolean {
+    return this.currentUser()?.role === 'NAGEUR';
+  }
+
   get roleLabel(): string {
     const r = this.currentUser()?.role;
     if (r === 'ADMIN') return 'Admin';

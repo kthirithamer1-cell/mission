@@ -105,6 +105,13 @@ export const routes: Routes = [
             (m) => m.CoachPresenceComponent
           ),
       },
+      {
+        path: 'nageur-profil',
+        loadComponent: () =>
+          import('./pages/nageur/nageur-profile/nageur-profile.component').then(
+            (m) => m.NageurProfileComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'login' },

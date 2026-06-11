@@ -1,4 +1,4 @@
-<div class="dash-shell" [attr.data-role]="roleClass" [ngClass]="{'shell-coach': isCoach()}">
+<div class="dash-shell" [attr.data-role]="roleClass" [ngClass]="{'shell-coach': isCoach(), 'shell-nageur': isNageur()}">
   <header class="dash-header">
     <a class="dash-brand" routerLink="/dashboard">
       <div class="dash-brand-icon" aria-hidden="true">
@@ -20,6 +20,9 @@
           <li><a routerLink="/mon-profil" routerLinkActive="active">Mon Profil</a></li>
           <li><a routerLink="/mon-planning" routerLinkActive="active">Mon Planning</a></li>
           <li><a routerLink="/presences" routerLinkActive="active">Présences</a></li>
+        }
+        @if (isNageur()) {
+          <li><a routerLink="/nageur-profil" routerLinkActive="active">Mon Profil</a></li>
         }
       </ul>
     </nav>
