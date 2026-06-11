@@ -1,11 +1,12 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AdminUiService } from '../../core/services/admin-ui.service';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-admin-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgClass],
   templateUrl: './admin-shell.component.html',
 })
 export class AdminShellComponent implements OnInit, OnDestroy {
@@ -24,6 +25,28 @@ export class AdminShellComponent implements OnInit, OnDestroy {
 
   toggleTheme(): void {
     this.ui.toggleTheme();
+  }
+
+  readonly currentUser = this.auth.currentUser;
+
+  isCoach(): boolean {
+    return this.currentUser()?.role === 'ENTRAINEUR';
+  }
+
+  get roleLabel(): string {
+    const r = this.currentUser()?.role;
+    if (r === 'ADMIN') return 'Admin';
+    if (r === 'ENTRAINEUR') return 'Coach';
+    if (r === 'NAGEUR') return 'Nageur';
+    return '';
+  }
+
+  get roleClass(): string {
+    const r = this.currentUser()?.role;
+    if (r === 'ADMIN') return 'role-admin';
+    if (r === 'ENTRAINEUR') return 'role-coach';
+    if (r === 'NAGEUR') return 'role-nageur';
+    return '';
   }
 
   logout(): void {
