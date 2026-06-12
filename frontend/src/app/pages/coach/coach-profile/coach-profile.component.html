@@ -1,0 +1,551 @@
+<div class="cp-root">
+
+  <!-- ── Page header ─────────────────────────────────────────── -->
+  <div class="cp-page-header">
+    <div class="cp-page-header-text">
+      <h1 class="cp-page-title">Mon Profil</h1>
+      <p class="cp-page-sub">Gérez vos informations personnelles et votre sécurité</p>
+    </div>
+  </div>
+
+  <!-- ── Loading skeleton ───────────────────────────────────── -->
+  @if (!profile()) {
+    <div class="cp-skeleton-wrap">
+      <div class="cp-skeleton cp-sk-avatar"></div>
+      <div class="cp-skeleton-lines">
+        <div class="cp-skeleton cp-sk-line cp-sk-w60"></div>
+        <div class="cp-skeleton cp-sk-line cp-sk-w40"></div>
+        <div class="cp-skeleton cp-sk-line cp-sk-w80"></div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Main content ───────────────────────────────────────── -->
+  @if (profile()) {
+    <div class="cp-layout">
+
+      <!-- ── Identity card ──────────────────────────────────── -->
+      <aside class="cp-identity-card">
+        <div class="cp-identity-banner"></div>
+        <div class="cp-identity-body">
+          <div class="cp-avatar-ring">
+            <div class="cp-avatar">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+          </div>
+          <h2 class="cp-identity-name">{{ profile()!.prenom }} {{ profile()!.nom }}</h2>
+          <span class="cp-role-chip">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/></svg>
+            Entraîneur
+          </span>
+
+          <div class="cp-identity-meta">
+            <div class="cp-meta-item">
+              <svg class="cp-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <span class="cp-meta-value">{{ profile()!.email }}</span>
+            </div>
+            @if (profile()!.groupes) {
+              <div class="cp-meta-item">
+                <svg class="cp-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span class="cp-meta-value">{{ profile()!.groupes }}</span>
+              </div>
+            }
+            @if (profile()!.clubNom) {
+              <div class="cp-meta-item">
+                <svg class="cp-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
+                </svg>
+                <span class="cp-meta-value">{{ profile()!.clubNom }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── Form panel ─────────────────────────────────────── -->
+      <div class="cp-form-panel">
+
+        <!-- Section 1 : Personal info -->
+        <section class="cp-section-card">
+          <div class="cp-section-head">
+            <div class="cp-section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="cp-section-title">Informations personnelles</h3>
+              <p class="cp-section-desc">Nom, prénom et groupes d'entraînement</p>
+            </div>
+          </div>
+
+          <form (ngSubmit)="save()" class="cp-form">
+            <div class="cp-field-row">
+              <div class="cp-field">
+                <label class="cp-label" for="prenom">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Prénom
+                </label>
+                <input
+                  id="prenom" name="prenom" type="text"
+                  class="cp-input"
+                  [ngModel]="form().prenom"
+                  (ngModelChange)="form.update(f => ({ ...f, prenom: $event }))"
+                  placeholder="Votre prénom"
+                  required
+                />
+              </div>
+              <div class="cp-field">
+                <label class="cp-label" for="nom">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Nom
+                </label>
+                <input
+                  id="nom" name="nom" type="text"
+                  class="cp-input"
+                  [ngModel]="form().nom"
+                  (ngModelChange)="form.update(f => ({ ...f, nom: $event }))"
+                  placeholder="Votre nom"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="cp-field">
+              <label class="cp-label cp-label-locked" for="email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Adresse email
+                <span class="cp-lock-badge">Non modifiable</span>
+              </label>
+              <div class="cp-input-locked-wrap">
+                <input
+                  id="email" name="email" type="email"
+                  class="cp-input cp-input-locked"
+                  [value]="form().email ?? ''"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <div class="cp-field">
+              <label class="cp-label" for="groupes">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Groupes entraînés
+              </label>
+              <input
+                id="groupes" name="groupes" type="text"
+                class="cp-input"
+                [ngModel]="form().groupes"
+                (ngModelChange)="form.update(f => ({ ...f, groupes: $event }))"
+                placeholder="Ex : Benjamins, Minimes, Juniors…"
+              />
+            </div>
+
+            <!-- ── Password section ── -->
+            <div class="cp-password-section">
+              <div class="cp-password-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Changer le mot de passe</span>
+                <span class="cp-optional-tag">Optionnel</span>
+              </div>
+              <div class="cp-field">
+                <label class="cp-label" for="newPassword">Nouveau mot de passe</label>
+                <input
+                  id="newPassword" name="newPassword" type="password"
+                  class="cp-input"
+                  [ngModel]="form().newPassword"
+                  (ngModelChange)="form.update(f => ({ ...f, newPassword: $event }))"
+                  placeholder="Laisser vide pour conserver l'actuel"
+                  autocomplete="new-password"
+                />
+              </div>
+            </div>
+
+            <!-- ── Actions ── -->
+            <div class="cp-actions">
+              <button type="submit" class="cp-btn-save" [class.cp-saving]="saving()" [disabled]="saving()">
+                @if (saving()) {
+                  <span class="cp-spinner"></span>
+                  <span>Enregistrement…</span>
+                } @else {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <span>Enregistrer les modifications</span>
+                }
+              </button>
+            </div>
+          </form>
+        </section>
+
+      </div>
+    </div>
+  }
+
+</div>
+
+<style>
+/* ── Root ─────────────────────────────────────────────────────── */
+.cp-root {
+  padding: 28px 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+@media (max-width: 640px) { .cp-root { padding: 16px; } }
+
+/* ── Page header ──────────────────────────────────────────────── */
+.cp-page-header {
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.cp-page-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  margin: 0 0 4px;
+  letter-spacing: -0.4px;
+}
+.cp-page-sub {
+  font-size: 0.88rem;
+  color: var(--text-secondary, #64748b);
+  margin: 0;
+}
+
+/* ── Skeleton ─────────────────────────────────────────────────── */
+.cp-skeleton-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 32px;
+  background: var(--card-bg, #fff);
+  border-radius: 16px;
+  border: 1px solid var(--border, #e2e8f0);
+}
+.cp-skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+.cp-skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.cp-sk-avatar { width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0; }
+.cp-sk-line { height: 14px; }
+.cp-sk-w60 { width: 60%; }
+.cp-sk-w40 { width: 40%; }
+.cp-sk-w80 { width: 80%; }
+@keyframes shimmer { to { background-position: -400% 0; } }
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.cp-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 860px) { .cp-layout { grid-template-columns: 1fr; } }
+
+/* ── Identity card ────────────────────────────────────────────── */
+.cp-identity-card {
+  border-radius: 16px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--card-bg, #fff);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+.cp-identity-banner {
+  height: 72px;
+  background: linear-gradient(135deg, #0c4a6e 0%, #0891b2 50%, #22d3ee 100%);
+}
+.cp-identity-body {
+  padding: 0 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.cp-avatar-ring {
+  margin-top: -36px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #0891b2, #22d3ee);
+  box-shadow: 0 0 0 3px var(--card-bg, #fff);
+  margin-bottom: 14px;
+}
+.cp-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0369a1, #0891b2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.cp-avatar svg { width: 36px; height: 36px; }
+
+.cp-identity-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin: 0 0 8px;
+  letter-spacing: -0.2px;
+}
+.cp-role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #ecfeff;
+  color: #0369a1;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 1px solid #bae6fd;
+  margin-bottom: 20px;
+}
+.cp-identity-meta {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+.cp-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--meta-bg, #f8fafc);
+  border-radius: 10px;
+  border: 1px solid var(--border, #e2e8f0);
+  transition: background 0.15s;
+}
+.cp-meta-item:hover { background: #f0f9ff; }
+.cp-meta-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #0891b2;
+  margin-top: 1px;
+}
+.cp-meta-value {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #475569);
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+/* ── Form panel ───────────────────────────────────────────────── */
+.cp-form-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Section card ─────────────────────────────────────────────── */
+.cp-section-card {
+  border-radius: 16px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--card-bg, #fff);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+.cp-section-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+  background: var(--section-head-bg, #f8fafc);
+}
+.cp-section-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0891b2, #06b6d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+.cp-section-icon svg { width: 18px; height: 18px; }
+.cp-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin: 0 0 2px;
+}
+.cp-section-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #64748b);
+  margin: 0;
+}
+
+/* ── Form ─────────────────────────────────────────────────────── */
+.cp-form { padding: 24px 28px; }
+
+.cp-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 560px) { .cp-field-row { grid-template-columns: 1fr; } }
+
+.cp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.cp-field:last-child { margin-bottom: 0; }
+
+.cp-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.cp-label-locked { color: #94a3b8; }
+.cp-lock-badge {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.cp-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border, #e2e8f0);
+  background: var(--input-bg, #f8fafc);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.cp-input::placeholder { color: #cbd5e1; }
+.cp-input:focus {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 3px rgba(8,145,178,0.12);
+  background: #fff;
+}
+.cp-input:hover:not(:disabled):not(:focus) { border-color: #94a3b8; }
+.cp-input-locked {
+  background: var(--locked-bg, #f1f5f9);
+  color: #94a3b8;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+.cp-input-locked-wrap { position: relative; }
+
+/* ── Password section ─────────────────────────────────────────── */
+.cp-password-section {
+  margin: 24px 0 0;
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--pw-bg, #f8fafc);
+  border: 1.5px dashed var(--border, #e2e8f0);
+}
+.cp-password-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary, #475569);
+  margin-bottom: 16px;
+}
+.cp-password-header svg { color: #0891b2; }
+.cp-optional-tag {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.cp-password-section .cp-field { margin-bottom: 0; }
+
+/* ── Actions ──────────────────────────────────────────────────── */
+.cp-actions {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border, #e2e8f0);
+  display: flex;
+  justify-content: flex-end;
+}
+.cp-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  background: linear-gradient(135deg, #0369a1 0%, #0891b2 50%, #06b6d4 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(8,145,178,0.35);
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.cp-btn-save::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.15s;
+}
+.cp-btn-save:hover:not(:disabled)::before { background: rgba(255,255,255,0.08); }
+.cp-btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(8,145,178,0.4);
+}
+.cp-btn-save:active:not(:disabled) { transform: translateY(0); }
+.cp-btn-save:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+.cp-btn-save.cp-saving { opacity: 0.85; }
+
+/* ── Spinner ──────────────────────────────────────────────────── */
+.cp-spinner {
+  width: 15px; height: 15px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: cp-spin 0.65s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+@keyframes cp-spin { to { transform: rotate(360deg); } }
+</style>

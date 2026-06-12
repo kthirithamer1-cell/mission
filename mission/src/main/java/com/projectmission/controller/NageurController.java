@@ -37,4 +37,16 @@ public class NageurController {
         service.delete(id);
         return ResponseEntity.ok("Nageur deleted successfully");
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe() {
+        NageurDTO dto = service.getMe();
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMe(@RequestBody NageurDTO dto) {
+        NageurDTO updated = service.updateMe(dto);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
 }

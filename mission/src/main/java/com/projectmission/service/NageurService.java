@@ -67,4 +67,24 @@ public class NageurService {
         }).orElse(null);
     }
     public void delete(Long id) { repository.deleteById(id); }
+
+    public NageurDTO getMe() {
+        String email = currentUserService.getEmail();
+        return repository.findByEmail(email).map(mapper::toDTO).orElse(null);
+    }
+
+    public NageurDTO updateMe(NageurDTO dto) {
+        String email = currentUserService.getEmail();
+        return repository.findByEmail(email).map(existing -> {
+            existing.setNom(dto.getNom());
+            existing.setPrenom(dto.getPrenom());
+            if (dto.getAge() != null) existing.setAge(dto.getAge());
+            if (dto.getSexe() != null) existing.setSexe(dto.getSexe());
+            if (dto.getCategorie() != null) existing.setCategorie(dto.getCategorie());
+            if (dto.getMotDePasse() != null && !dto.getMotDePasse().isBlank()) {
+                existing.setMotDePasse(passwordEncoder.encode(dto.getMotDePasse()));
+            }
+            return mapper.toDTO(repository.save(existing));
+        }).orElse(null);
+    }
 }

@@ -36,6 +36,18 @@ public class EntraineurController {
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe() {
+        EntraineurDTO dto = service.getMe();
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMe(@RequestBody EntraineurDTO dto) {
+        EntraineurDTO updated = service.updateMe(dto);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         service.delete(id);
