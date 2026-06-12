@@ -1,0 +1,148 @@
+<main class="dash-page-main">
+  <section class="comp-hero dash-card" aria-labelledby="live-title">
+    <div class="comp-hero-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4 3h16v2H4V3zm1 4h14v4H5V7zm0 6h14v8H5v-8zm2 2v4h10v-4H7z" />
+      </svg>
+    </div>
+    <p class="dash-card-label">Live Scores</p>
+    <h1 id="live-title" class="dash-card-title">Resultats en direct</h1>
+    <p class="comp-hero-sub">Suivez les performances en temps reel et publiez les resultats.</p>
+  </section>
+
+  <section class="dash-card" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+    <div style="flex: 1; min-width: 220px;">
+      <label style="display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px;">Competition</label>
+      <select
+        [ngModel]="selectedCompetitionId()"
+        (ngModelChange)="selectCompetition($event)"
+        style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);"
+      >
+        <option [ngValue]="null">Toutes les competitions</option>
+        @for (comp of competitions(); track comp.id) {
+          <option [ngValue]="comp.id">{{ comp.nom }}</option>
+        }
+      </select>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <span style="font-size: 0.85rem; color: var(--text-secondary);">Etat:</span>
+      <span
+        class="badge"
+        style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 4px 10px; border-radius: 999px; font-weight: 600;"
+      >
+        {{ isConnecting() ? 'Connexion...' : 'Connecte' }}
+      </span>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: start;">
+    <section class="dash-card" style="padding: 18px;">
+      <h2 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 12px;">Flux live</h2>
+      @if (liveEvents().length === 0) {
+        <div style="text-align: center; color: var(--text-secondary); padding: 24px;">
+          Aucun evenement recu pour le moment.
+        </div>
+      }
+      <div style="display: flex; flex-direction: column; gap: 12px; max-height: 480px; overflow: auto;">
+        @for (ev of liveEvents(); track ev.timestamp) {
+          <div style="border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 14px; background: var(--bg-secondary);">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+              <strong style="font-size: 0.95rem; color: var(--text-primary);">{{ ev.nageurNom }}</strong>
+              <span style="font-size: 0.75rem; color: var(--text-secondary);">{{ ev.timestamp | date:'shortTime' }}</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;">
+              {{ ev.epreuveNom }}
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
+              <span style="font-family: monospace; font-weight: 700; color: var(--primary);">{{ ev.temps }}</span>
+              <span style="font-size: 0.8rem; color: var(--text-secondary);">Rang {{ ev.classement }}</span>
+              @if (ev.points) {
+                <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ ev.points }} pts</span>
+              }
+              @if (ev.record) {
+                <span class="badge" style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">
+                  Record
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div style="margin-top: 24px;">
+        <h3 style="font-size: 1rem; font-weight: 700; margin: 0 0 12px;">Points cumulés en direct</h3>
+        <div style="height: 250px; position: relative;">
+          <canvas #liveChartCanvas></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-card" style="padding: 18px;">
+      <h2 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 12px;">Publier un resultat live</h2>
+      <div style="display: grid; gap: 12px;">
+        <label style="font-size: 0.8rem; color: var(--text-secondary);">Epreuve</label>
+        <select
+          [ngModel]="selectedEpreuveId()"
+          (ngModelChange)="selectedEpreuveId.set($event)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);"
+        >
+          @for (epreuve of epreuvesForCompetition(); track epreuve.id) {
+            <option [ngValue]="epreuve.id">{{ epreuve.distance }}m {{ epreuve.style }} ({{ epreuve.categorie }})</option>
+          }
+        </select>
+
+        <label style="font-size: 0.8rem; color: var(--text-secondary);">Nageur</label>
+        <select
+          [ngModel]="selectedNageurId()"
+          (ngModelChange)="selectedNageurId.set($event)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);"
+        >
+          @for (nageur of nageurs(); track nageur.id) {
+            <option [ngValue]="nageur.id">{{ nageur.prenom }} {{ nageur.nom }}</option>
+          }
+        </select>
+
+        <label style="font-size: 0.8rem; color: var(--text-secondary);">Temps</label>
+        <input
+          type="text"
+          placeholder="00:55.24"
+          [ngModel]="temps()"
+          (ngModelChange)="temps.set($event)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);"
+        />
+
+        <label style="font-size: 0.8rem; color: var(--text-secondary);">Classement</label>
+        <input
+          type="number"
+          min="1"
+          [ngModel]="classement()"
+          (ngModelChange)="classement.set($event ? Number($event) : null)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);"
+        />
+
+        <label style="font-size: 0.8rem; color: var(--text-secondary);">Points FINA (optionnel)</label>
+        <input
+          type="number"
+          min="0"
+          [ngModel]="points()"
+          (ngModelChange)="points.set($event ? Number($event) : null)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary);"
+        />
+
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+          <input type="checkbox" [ngModel]="record()" (ngModelChange)="record.set($event)" />
+          Record club
+        </label>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          style="padding: 10px 16px; border-radius: 6px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer;"
+          (click)="submitLiveResult()"
+        >
+          Publier
+        </button>
+      </div>
+    </section>
+  </div>
+</main>

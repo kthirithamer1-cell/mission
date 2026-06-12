@@ -84,6 +84,34 @@ export const routes: Routes = [
             (m) => m.ResultatsComponent
           ),
       },
+      {
+        path: 'competitions',
+        loadComponent: () =>
+          import('./pages/admin/competitions/competitions.component').then(
+            (m) => m.CompetitionsComponent
+          ),
+      },
+      {
+        path: 'statistiques',
+        loadComponent: () =>
+          import('./pages/admin/statistiques/statistiques.component').then(
+            (m) => m.StatistiquesComponent
+          ),
+      },
+      {
+        path: 'international',
+        loadComponent: () =>
+          import('./pages/admin/international/international.component').then(
+            (m) => m.InternationalComponent
+          ),
+      },
+      {
+        path: 'live',
+        loadComponent: () =>
+          import('./pages/admin/live/live.component').then(
+            (m) => m.LiveComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'login' },

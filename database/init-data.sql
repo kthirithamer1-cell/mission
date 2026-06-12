@@ -74,3 +74,48 @@ VALUES ('Trabelsi', 'Amine', 'nageur@mission.tn',
         '$2y$10$UDPemtqLIJTpYO/L/JETjepoxfOSy6B4sskl1ej4TTvHgYTP/WMXW',
         'NAGEUR', 1);
 INSERT INTO nageur (id) VALUES (LAST_INSERT_ID());
+
+-- ============================================================
+-- 4. Seed Data for Competitions, Epreuves, and Resultats
+-- ============================================================
+
+-- Insert sample competitions
+INSERT INTO competition (nom, lieu, date_debut, date_fin, type, statut, niveau, organisateur, description, saison)
+VALUES ('Championnat de Tunisie Open', 'Piscine Olympique de Rades', '2026-05-10', '2026-05-15', 'CHAMPIONNAT', 'TERMINE', 'NATIONAL', 'FTN', 'Le plus grand championnat national de natation en Tunisie.', '2025-2026');
+SET @comp_id_1 = LAST_INSERT_ID();
+
+INSERT INTO competition (nom, lieu, date_debut, date_fin, type, statut, niveau, organisateur, description, saison)
+VALUES ('Coupe de la Ligue de Tunis', 'Piscine El Menzah', '2026-06-04', '2026-06-07', 'COUPE', 'EN_COURS', 'REGIONAL', 'Ligue de Tunis', 'Compétition régionale regroupant les clubs du Grand Tunis.', '2025-2026');
+SET @comp_id_2 = LAST_INSERT_ID();
+
+INSERT INTO competition (nom, lieu, date_debut, date_fin, type, statut, niveau, organisateur, description, saison)
+VALUES ('Meeting International d\'Eté', 'Piscine de Rades', '2026-07-20', '2026-07-24', 'MEETING', 'A_VENIR', 'INTERNATIONAL', 'FTN / World Aquatics', 'Meeting international de natation réunissant les meilleurs athlètes.', '2025-2026');
+SET @comp_id_3 = LAST_INSERT_ID();
+
+-- Insert sample events (epreuves)
+-- For comp 1 (Tunisie Open): 100m Nage Libre, 50m Papillon
+INSERT INTO epreuve (distance, style, categorie, competition_id) VALUES (100, 'NAGE_LIBRE', 'SENIOR', @comp_id_1);
+SET @epreuve_id_1 = LAST_INSERT_ID();
+INSERT INTO epreuve (distance, style, categorie, competition_id) VALUES (50, 'PAPILLON', 'SENIOR', @comp_id_1);
+SET @epreuve_id_2 = LAST_INSERT_ID();
+
+-- For comp 2 (Coupe de la Ligue): 200m Brasse, 50m Nage Libre
+INSERT INTO epreuve (distance, style, categorie, competition_id) VALUES (200, 'BRASSE', 'JUNIOR', @comp_id_2);
+SET @epreuve_id_3 = LAST_INSERT_ID();
+INSERT INTO epreuve (distance, style, categorie, competition_id) VALUES (50, 'NAGE_LIBRE', 'JUNIOR', @comp_id_2);
+SET @epreuve_id_4 = LAST_INSERT_ID();
+
+-- For comp 3 (Meeting): 100m Dos
+INSERT INTO epreuve (distance, style, categorie, competition_id) VALUES (100, 'DOS', 'SENIOR', @comp_id_3);
+SET @epreuve_id_5 = LAST_INSERT_ID();
+
+-- Set details for swimmer (Amine Trabelsi, id = 3)
+UPDATE nageur SET age = 20, sexe = 'M', categorie = 'SENIOR' WHERE id = 3;
+
+-- Insert sample results for Amine Trabelsi (id = 3)
+INSERT INTO resultat (temps, classement, points, record, date_competition, nageur_id, epreuve_id)
+VALUES ('00:52.45', 2, 790, 0, '2026-05-12', 3, @epreuve_id_1);
+
+INSERT INTO resultat (temps, classement, points, record, date_competition, nageur_id, epreuve_id)
+VALUES ('00:24.89', 1, 810, 1, '2026-05-14', 3, @epreuve_id_2);
+

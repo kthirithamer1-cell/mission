@@ -18,13 +18,36 @@ public class ResultatService {
     @Autowired
     private ResultatMapper mapper;
 
-    public List<ResultatDTO> getAll() { return repository.findAll().stream().map(mapper::toDTO).collect(Collectors.toList()); }
-    public ResultatDTO getById(Long id) { return repository.findById(id).map(mapper::toDTO).orElse(null); }
-    public ResultatDTO create(ResultatDTO dto) { Resultat saved = repository.save(mapper.toEntity(dto)); return mapper.toDTO(saved); }
+    public List<ResultatDTO> getAll() { 
+        return repository.findAll().stream().map(mapper::toDTO).collect(Collectors.toList()); 
+    }
+    
+    public ResultatDTO getById(Long id) { 
+        return repository.findById(id).map(mapper::toDTO).orElse(null); 
+    }
+    
+    public List<ResultatDTO> getByNageur(Long nageurId) {
+        return repository.findByNageurId(nageurId).stream().map(mapper::toDTO).collect(Collectors.toList());
+    }
+
+    public List<ResultatDTO> getByCompetition(Long competitionId) {
+        return repository.findByEpreuveCompetitionId(competitionId).stream().map(mapper::toDTO).collect(Collectors.toList());
+    }
+
+    public ResultatDTO create(ResultatDTO dto) { 
+        Resultat entity = mapper.toEntity(dto);
+        Resultat saved = repository.save(entity); 
+        return mapper.toDTO(saved); 
+    }
+    
     public ResultatDTO update(Long id, ResultatDTO dto) {
         return repository.findById(id).map(existing -> {
             existing.setTemps(dto.getTemps());
             existing.setClassement(dto.getClassement());
+            existing.setPoints(dto.getPoints());
+            existing.setRecord(dto.getRecord());
+            existing.setDateCompetition(dto.getDateCompetition());
+            
             Resultat mapped = mapper.toEntity(dto);
             if (mapped.getNageur() != null) {
                 existing.setNageur(mapped.getNageur());
@@ -35,5 +58,8 @@ public class ResultatService {
             return mapper.toDTO(repository.save(existing));
         }).orElse(null);
     }
-    public void delete(Long id) { repository.deleteById(id); }
+    
+    public void delete(Long id) { 
+        repository.deleteById(id); 
+    }
 }

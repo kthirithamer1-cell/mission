@@ -23,8 +23,22 @@ public class ResultatMapper {
         dto.setId(entity.getId());
         dto.setTemps(entity.getTemps());
         dto.setClassement(entity.getClassement());
-        dto.setNageurId(entity.getNageur() != null ? entity.getNageur().getId() : null);
-        dto.setEpreuveId(entity.getEpreuve() != null ? entity.getEpreuve().getId() : null);
+        dto.setPoints(entity.getPoints());
+        dto.setRecord(entity.getRecord());
+        dto.setDateCompetition(entity.getDateCompetition());
+        
+        if (entity.getNageur() != null) {
+            dto.setNageurId(entity.getNageur().getId());
+            dto.setNageurNom(entity.getNageur().getPrenom() + " " + entity.getNageur().getNom());
+        }
+        
+        if (entity.getEpreuve() != null) {
+            dto.setEpreuveId(entity.getEpreuve().getId());
+            dto.setEpreuveNom(entity.getEpreuve().getDistance() + "m " + entity.getEpreuve().getStyle());
+            if (entity.getEpreuve().getCompetition() != null) {
+                dto.setCompetitionNom(entity.getEpreuve().getCompetition().getNom());
+            }
+        }
         return dto;
     }
 
@@ -34,6 +48,10 @@ public class ResultatMapper {
         entity.setId(dto.getId());
         entity.setTemps(dto.getTemps());
         entity.setClassement(dto.getClassement());
+        entity.setPoints(dto.getPoints());
+        entity.setRecord(dto.getRecord());
+        entity.setDateCompetition(dto.getDateCompetition());
+        
         if (dto.getNageurId() != null) {
             Nageur nageur = nageurRepository.findById(dto.getNageurId()).orElse(null);
             entity.setNageur(nageur);

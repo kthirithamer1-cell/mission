@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/clubs.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/reservations.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/super-admin.html")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/ws/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/**")).hasAnyRole("SUPER_ADMIN", "ADMIN", "NAGEUR", "ENTRAINEUR")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

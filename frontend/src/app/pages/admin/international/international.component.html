@@ -1,0 +1,245 @@
+<main class="dash-page-main">
+  <!-- Hero Section -->
+  <section class="comp-hero dash-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding: 25px;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <div style="font-size: 2.2rem; background: rgba(34, 211, 238, 0.1); color: #06b6d4; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 12px;">🌍</div>
+      <div>
+        <p class="dash-card-label">Données Mondiales (Scraped via World Aquatics)</p>
+        <h1 class="dash-card-title" style="margin: 0 0 4px;">Élite Internationale & Records</h1>
+        <p class="comp-hero-sub" style="margin: 0;">Records du monde officiels, timelines des grands championnats et profils des stars mondiales.</p>
+      </div>
+    </div>
+    
+    <button 
+      type="button" 
+      class="btn btn-primary" 
+      [disabled]="isScraping()"
+      style="padding: 10px 20px; font-weight: bold; background: var(--primary); border: none; color: white; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;"
+      (click)="triggerScrape()"
+    >
+      @if (isScraping()) {
+        <span class="spinner" style="display: inline-block; width: 14px; height: 14px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></span>
+        Scraping...
+      } @else {
+        🔄 Actualiser les données
+      }
+    </button>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <div style="display: flex; border-bottom: 2px solid var(--border-color); margin: 25px 0; gap: 5px; overflow-x: auto; padding-bottom: 2px;">
+    <button 
+      type="button" 
+      [class.is-active]="activeTab() === 'records'"
+      style="padding: 12px 20px; font-weight: bold; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: var(--text-secondary); outline: none; white-space: nowrap; font-size: 0.95rem;"
+      [style.border-bottom-color]="activeTab() === 'records' ? 'var(--primary)' : 'transparent'"
+      [style.color]="activeTab() === 'records' ? 'var(--primary)' : 'var(--text-secondary)'"
+      (click)="changeTab('records')"
+    >
+      ⏱️ Records du Monde
+    </button>
+    <button 
+      type="button" 
+      [class.is-active]="activeTab() === 'swimmers'"
+      style="padding: 12px 20px; font-weight: bold; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: var(--text-secondary); outline: none; white-space: nowrap; font-size: 0.95rem;"
+      [style.border-bottom-color]="activeTab() === 'swimmers' ? 'var(--primary)' : 'transparent'"
+      [style.color]="activeTab() === 'swimmers' ? 'var(--primary)' : 'var(--text-secondary)'"
+      (click)="changeTab('swimmers')"
+    >
+      ⭐ Nageurs de Légende
+    </button>
+    <button 
+      type="button" 
+      [class.is-active]="activeTab() === 'competitions'"
+      style="padding: 12px 20px; font-weight: bold; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: var(--text-secondary); outline: none; white-space: nowrap; font-size: 0.95rem;"
+      [style.border-bottom-color]="activeTab() === 'competitions' ? 'var(--primary)' : 'transparent'"
+      [style.color]="activeTab() === 'competitions' ? 'var(--primary)' : 'var(--text-secondary)'"
+      (click)="changeTab('competitions')"
+    >
+      🏆 Grands Championnats
+    </button>
+  </div>
+
+  <!-- TAB CONTENT: RECORDS -->
+  @if (activeTab() === 'records') {
+    <div class="dash-card" style="padding: 20px;">
+      <!-- Filters Row -->
+      <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Taille du Bassin</label>
+          <select 
+            [ngModel]="filterBassin()" 
+            (ngModelChange)="filterBassin.set($event); onRecordFilterChange()"
+            style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-size: 0.9rem; font-weight: 600;"
+          >
+            <option value="50m">Grand Bassin (50m)</option>
+            <option value="25m">Petit Bassin (25m)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Catégorie</label>
+          <select 
+            [ngModel]="filterSexe()" 
+            (ngModelChange)="filterSexe.set($event); onRecordFilterChange()"
+            style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-size: 0.9rem; font-weight: 600;"
+          >
+            <option value="H">Hommes</option>
+            <option value="F">Femmes</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table of records -->
+      <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+          <thead>
+            <tr style="background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);">
+              <th style="padding: 12px 15px;">Épreuve</th>
+              <th style="padding: 12px 15px;">Temps</th>
+              <th style="padding: 12px 15px;">Détenteur</th>
+              <th style="padding: 12px 15px;">Nation</th>
+              <th style="padding: 12px 15px;">Date du Record</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (records().length === 0) {
+              <tr>
+                <td colspan="5" style="padding: 30px; text-align: center; color: var(--text-secondary);">
+                  Aucun record trouvé dans la base locale. Essayez d'actualiser les données.
+                </td>
+              </tr>
+            }
+            @for (rec of records(); track rec.id) {
+              <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 12px 15px; font-weight: bold; color: var(--text-primary);">{{ rec.epreuve }}</td>
+                <td style="padding: 12px 15px; font-family: monospace; font-size: 1.05rem; font-weight: bold; color: var(--primary);">{{ rec.temps }}</td>
+                <td style="padding: 12px 15px; font-weight: 600; color: var(--text-primary);">{{ rec.nageur }}</td>
+                <td style="padding: 12px 15px;">
+                  <span style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">
+                    {{ rec.nationalite }}
+                  </span>
+                </td>
+                <td style="padding: 12px 15px; color: var(--text-secondary);">{{ rec.date | date:'longDate' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- TAB CONTENT: SWIMMERS -->
+  @if (activeTab() === 'swimmers') {
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
+      @if (swimmers().length === 0) {
+        <div class="dash-card" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-secondary);">
+          Aucun nageur international enregistré.
+        </div>
+      }
+      @for (sw of swimmers(); track sw.id) {
+        <article class="dash-card" style="display: flex; gap: 15px; padding: 15px; align-items: start;">
+          <img 
+            [src]="sw.photoUrl" 
+            [alt]="sw.nom" 
+            style="width: 100px; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);"
+          />
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+              <h3 style="font-size: 1.15rem; font-weight: bold; margin: 0; color: var(--text-primary);">{{ sw.nom }}</h3>
+              <span style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">
+                {{ sw.nationalite }}
+              </span>
+            </div>
+            <p style="font-size: 0.8rem; font-weight: 600; color: var(--primary); margin: 0 0 6px;">
+              ⚡ Spécialités : {{ sw.specialite }}
+            </p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin: 0 0 8px; font-style: italic;">
+              🏆 {{ sw.palmares }}
+            </p>
+            <div style="font-size: 0.8rem; background: var(--bg-secondary); border-radius: 6px; padding: 6px 10px; border: 1px dashed var(--border-color);">
+              <strong style="display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 2px;">Records personnels</strong>
+              <span style="font-family: monospace; color: var(--text-primary);">{{ sw.recordsPersonnels }}</span>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- TAB CONTENT: COMPETITIONS -->
+  @if (activeTab() === 'competitions') {
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      
+      <!-- List of international meets -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        @if (competitions().length === 0) {
+          <div class="dash-card" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+            Aucune compétition internationale enregistrée.
+          </div>
+        }
+        @for (comp of competitions(); track comp.id) {
+          <article class="dash-card" style="padding: 20px;">
+            <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <span style="font-size: 0.75rem; font-weight: bold; background: rgba(6, 182, 212, 0.1); color: #06b6d4; padding: 3px 8px; border-radius: 12px;">
+                  {{ comp.type }}
+                </span>
+                <h3 style="font-size: 1.25rem; font-weight: bold; margin: 5px 0 0; color: var(--text-primary);">{{ comp.nom }}</h3>
+              </div>
+              <div style="text-align: right; font-size: 0.85rem; color: var(--text-secondary);">
+                <span style="display: block; font-weight: 500;">📍 {{ comp.lieu }}</span>
+                <span>🗓️ {{ comp.dates }}</span>
+              </div>
+            </header>
+            
+            <p style="font-size: 0.9rem; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 5px; letter-spacing: 0.05em;">Faits Marquants & Résultats Clés :</p>
+            <p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5; margin: 0; white-space: pre-line;">
+              {{ comp.resultatsPrincipaux }}
+            </p>
+          </article>
+        }
+      </div>
+
+      <!-- Live Broadcast Links Section -->
+      <section class="dash-card" style="padding: 20px; border-top: 3px solid var(--primary); margin-top: 10px;">
+        <h3 style="font-size: 1.2rem; font-weight: bold; margin: 0 0 10px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <span>📺</span> Regarder les Compétitions de Natation en Direct
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 20px; line-height: 1.4;">
+          Conformément aux droits de diffusion officiels détenus par les fédérations nationales et internationales, nous ne pouvons pas intégrer directement les flux vidéos. Cependant, vous pouvez suivre les compétitions internationales en direct et légalement via les canaux officiels ci-dessous :
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+          @for (link of getLiveLinks(); track link.name) {
+            <a 
+              [href]="link.url" 
+              target="_blank" 
+              style="display: flex; gap: 15px; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); text-decoration: none; color: inherit; transition: all 0.2s;"
+              onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-2px)'"
+              onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='none'"
+            >
+              <div style="font-size: 2rem; width: 50px; height: 50px; background: var(--bg-primary); display: flex; justify-content: center; align-items: center; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                {{ link.logo }}
+              </div>
+              <div style="flex: 1;">
+                <h4 style="font-size: 0.95rem; font-weight: bold; margin: 0 0 4px; color: var(--text-primary); display: flex; align-items: center; gap: 5px;">
+                  {{ link.name }} <span style="font-size: 0.75rem;">↗</span>
+                </h4>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.3; margin: 0;">
+                  {{ link.desc }}
+                </p>
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</main>
+
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
