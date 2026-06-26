@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Club } from '../models/app.models';
+import { Club, Entraineur } from '../models/app.models';
 
 @Injectable({ providedIn: 'root' })
 export class ClubService {
@@ -14,6 +14,10 @@ export class ClubService {
 
   getById(id: number): Observable<Club> {
     return this.http.get<Club>(`${environment.apiUrl}/clubs/${id}`);
+  }
+
+  getCoaches(id: number): Observable<Entraineur[]> {
+    return this.http.get<Entraineur[]>(`${environment.apiUrl}/clubs/${id}/entraineurs`);
   }
 
   create(club: Club): Observable<Club> {

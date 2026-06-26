@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/uploads/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin-dashboard.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/resultats.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/athletes.html")).permitAll()

@@ -83,4 +83,12 @@ public class EntraineurService {
             return mapper.toDTO(repository.save(existing));
         }).orElse(null);
     }
+
+    public EntraineurDTO updatePhoto(String photoUrl) {
+        String email = currentUserService.getEmail();
+        return repository.findByEmail(email).map(existing -> {
+            existing.setPhotoUrl(photoUrl);
+            return mapper.toDTO(repository.save(existing));
+        }).orElse(null);
+    }
 }

@@ -2,7 +2,9 @@ package com.projectmission.service;
 
 import com.projectmission.dto.NageurDTO;
 import com.projectmission.mapper.NageurMapper;
+import com.projectmission.model.Club;
 import com.projectmission.model.Nageur;
+import com.projectmission.repository.ClubRepository;
 import com.projectmission.repository.NageurRepository;
 import com.projectmission.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class NageurService {
 
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private ClubRepository clubRepository;
 
     public List<NageurDTO> getAllForCurrentUser() {
         if (currentUserService.isSuperAdmin()) {
@@ -76,14 +81,26 @@ public class NageurService {
     public NageurDTO updateMe(NageurDTO dto) {
         String email = currentUserService.getEmail();
         return repository.findByEmail(email).map(existing -> {
-            existing.setNom(dto.getNom());
-            existing.setPrenom(dto.getPrenom());
+            if (dto.getNom() != null) existing.setNom(dto.getNom());
+            if (dto.getPrenom() != null) existing.setPrenom(dto.getPrenom());
             if (dto.getAge() != null) existing.setAge(dto.getAge());
             if (dto.getSexe() != null) existing.setSexe(dto.getSexe());
             if (dto.getCategorie() != null) existing.setCategorie(dto.getCategorie());
+            if (dto.getClubId() != null) {
+                Club club = clubRepository.findById(dto.getClubId()).orElse(null);
+                existing.setClub(club);
+            }
             if (dto.getMotDePasse() != null && !dto.getMotDePasse().isBlank()) {
                 existing.setMotDePasse(passwordEncoder.encode(dto.getMotDePasse()));
             }
+            return mapper.toDTO(repository.save(existing));
+        }).orElse(null);
+    }
+
+    public NageurDTO updatePhoto(String photoUrl) {
+        String email = currentUserService.getEmail();
+        return repository.findByEmail(email).map(existing -> {
+            existing.setPhotoUrl(photoUrl);
             return mapper.toDTO(repository.save(existing));
         }).orElse(null);
     }

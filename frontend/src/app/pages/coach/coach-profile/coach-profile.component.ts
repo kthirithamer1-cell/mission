@@ -2,19 +2,23 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EntraineurService } from '../../../core/services/entraineur.service';
 import { AdminUiService } from '../../../core/services/admin-ui.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Entraineur } from '../../../core/models/app.models';
+import { PhotoUploadComponent } from '../../../shared/photo-upload/photo-upload.component';
 
 @Component({
   selector: 'app-coach-profile',
-  imports: [FormsModule],
+  imports: [FormsModule, PhotoUploadComponent],
   templateUrl: './coach-profile.component.html',
 })
 export class CoachProfileComponent implements OnInit {
   private readonly entraineurService = inject(EntraineurService);
   private readonly ui = inject(AdminUiService);
+  private readonly auth = inject(AuthService);
 
   profile = signal<Entraineur | null>(null);
   saving = signal(false);
+  uploadingPhoto = signal(false);
 
   form = signal<Partial<Entraineur> & { newPassword?: string }>({
     nom: '',
@@ -66,6 +70,32 @@ export class CoachProfileComponent implements OnInit {
         this.saving.set(false);
         this.ui.toast('Erreur lors de la mise à jour', 'error');
       },
+    });
+  }
+
+  onPhotoSelected(file: File): void {
+    this.uploadingPhoto.set(true);
+    this.entraineurService.uploadPhoto(file).subscribe({
+      next: (updatedUser) => {
+        this.uploadingPhoto.set(false);
+        this.ui.toast('Photo de profil mise à jour', 'success');
+        
+        // Update local session
+        const current = this.auth.currentUser();
+        if (current) {
+          this.auth.updateUserSession({
+            ...current,
+            photoUrl: updatedUser.photoUrl
+          });
+        }
+        
+        // Update local profile signal
+        this.profile.update(p => p ? { ...p, photoUrl: updatedUser.photoUrl } : null);
+      },
+      error: (err) => {
+        this.uploadingPhoto.set(false);
+        this.ui.toast('Erreur lors de l\'envoi de la photo', 'error');
+      }
     });
   }
 }

@@ -1,0 +1,128 @@
+/* Coach Dashboard Theme Styles */
+
+.coach-theme-text {
+  background: linear-gradient(105deg, #b45309 0%, #d97706 55%, #f59e0b 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+.btn-amber {
+  background: #d97706;
+  color: #fff;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-amber:hover {
+  background: #b45309;
+}
+
+.btn-outline-amber {
+  background: transparent;
+  color: #d97706;
+  border: 2px solid #d97706;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-amber:hover {
+  background: #d97706;
+  color: #fff;
+}
+
+.btn-amber-light {
+  background: rgba(217, 119, 6, 0.1);
+  color: #b45309;
+  border: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-amber-light:hover {
+  background: rgba(217, 119, 6, 0.2);
+}
+
+.btn-sm {
+  padding: 0.35rem 0.7rem !important;
+  font-size: 0.75rem !important;
+}
+
+.tile-amber {
+  border-left: 4px solid #d97706 !important;
+}
+
+.icon-amber {
+  background: rgba(217, 119, 6, 0.1) !important;
+  color: #d97706 !important;
+}
+
+.badge-amber {
+  background: rgba(217, 119, 6, 0.1);
+  color: #b45309;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Supervised swimmers photo column styling */
+.table-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(217, 119, 6, 0.2);
+  display: block;
+}
+
+.table-avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  border: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar profile card styles */
+.profile-sidebar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1.25rem !important;
+}
+
+.profile-details-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 1rem 0;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.detail-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #1f2937;
+  text-align: right;
+}

@@ -13,7 +13,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Configuration
-@Profile("dev")
 public class DevDataInitializer {
 
     @Bean
@@ -37,6 +36,22 @@ public class DevDataInitializer {
             est.setAdresse("Stade El Menzah, Tunis");
             est.setDateAffiliation(LocalDate.of(1925, 1, 1));
             est = clubRepository.save(est);
+
+            final Club clubToLink = est;
+
+            // Link existing demo users from database/init-data.sql if they exist in the DB
+            adminRepository.findByEmail("admin@mission.tn").ifPresent(admin -> {
+                admin.setClub(clubToLink);
+                adminRepository.save(admin);
+            });
+            entraineurRepository.findByEmail("coach@mission.tn").ifPresent(coach -> {
+                coach.setClub(clubToLink);
+                entraineurRepository.save(coach);
+            });
+            nageurRepository.findByEmail("nageur@mission.tn").ifPresent(nageur -> {
+                nageur.setClub(clubToLink);
+                nageurRepository.save(nageur);
+            });
 
             Club cnb = new Club();
             cnb.setNom("Club Nautique de Bizerte");
@@ -165,6 +180,37 @@ public class DevDataInitializer {
             seance.setDescription("Technique papillon + endurance");
             seanceRepository.save(seance);
 
+            Seance seance2 = new Seance();
+            seance2.setClub(est);
+            seance2.setReservation(r2);
+            seance2.setEntraineur(coach2);
+            seance2.setTitre("Entra├«nement benjamins / minimes");
+            seance2.setDate(r2.getDate());
+            seance2.setHeureDebut(r2.getHeureDebut());
+            seance2.setHeureFin(r2.getHeureFin());
+            seance2.setDescription("Endurance fond + relais");
+            seanceRepository.save(seance2);
+
+            LocalDate weekStart = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
+            Object[][] extraSessions = {
+                    {coach1, weekStart, LocalTime.of(7, 0), LocalTime.of(8, 30), "Natation matinale cadets", "Volume a├⌐robie"},
+                    {coach1, weekStart.plusDays(2), LocalTime.of(18, 0), LocalTime.of(19, 30), "Technique crawl", "Battements + rotation"},
+                    {coach2, weekStart.plusDays(1), LocalTime.of(16, 0), LocalTime.of(17, 0), "Initiation benjamins", "Flottaison et glisse"},
+                    {coach2, weekStart.plusDays(4), LocalTime.of(10, 30), LocalTime.of(12, 0), "Pr├⌐paration comp├⌐tition", "Sprint + virages"},
+                    {coach1, weekStart.plusDays(5), LocalTime.of(9, 0), LocalTime.of(10, 30), "Renforcement minimes", "Brasse + dos"},
+            };
+            for (Object[] row : extraSessions) {
+                Seance s = new Seance();
+                s.setClub(est);
+                s.setEntraineur((Entraineur) row[0]);
+                s.setDate((LocalDate) row[1]);
+                s.setHeureDebut((LocalTime) row[2]);
+                s.setHeureFin((LocalTime) row[3]);
+                s.setTitre((String) row[4]);
+                s.setDescription((String) row[5]);
+                seanceRepository.save(s);
+            }
+
             Competition comp = new Competition();
             comp.setSpecialite("Natation");
             comp.setEpreuve("Championnat TC");
@@ -197,5 +243,88 @@ public class DevDataInitializer {
                 resultatRepository.save(res);
             }
         };
+    }
+
+    /**
+     * Always-run fixer: ensures demo accounts from init-data.sql have
+     * Java-compatible BCrypt passwords ($2a$) and are linked to a club.
+     */
+    @Bean
+    CommandLineRunner fixDemoAccounts(
+            ClubRepository clubRepository,
+            AdminRepository adminRepository,
+            EntraineurRepository entraineurRepository,
+            NageurRepository nageurRepository,
+            PasswordEncoder passwordEncoder) {
+        return args -> {
+            // Re-encode passwords if they still use the PHP $2y$ prefix
+            fixPassword(adminRepository.findByEmail("admin@mission.tn").map(a -> (com.projectmission.model.Utilisateur) a).orElse(null),
+                    "Admin@123", passwordEncoder, nageurRepository, adminRepository, entraineurRepository);
+            fixPassword(entraineurRepository.findByEmail("coach@mission.tn").map(e -> (com.projectmission.model.Utilisateur) e).orElse(null),
+                    "Coach@123", passwordEncoder, nageurRepository, adminRepository, entraineurRepository);
+
+            entraineurRepository.findByEmail("coach@mission.tn").ifPresent(coach -> {
+                if (coach.getGroupes() == null || coach.getGroupes().isBlank()) {
+                    coach.setGroupes("CADETS, JUNIORS");
+                    entraineurRepository.save(coach);
+                }
+            });
+
+            nageurRepository.findByEmail("nageur@mission.tn").ifPresent(nageur -> {
+                if (nageur.getCategorie() == null || nageur.getCategorie().isBlank()) {
+                    nageur.setCategorie("CADETS");
+                    nageurRepository.save(nageur);
+                }
+            });
+            fixPassword(nageurRepository.findByEmail("nageur@mission.tn").map(n -> (com.projectmission.model.Utilisateur) n).orElse(null),
+                    "Nageur@123", passwordEncoder, nageurRepository, adminRepository, entraineurRepository);
+
+            // Ensure all users (including newly registered ones) are linked to a club
+            clubRepository.findAll().stream()
+                    .findFirst()
+                    .ifPresent(firstClub -> {
+                        // Link all Admins who are not super admins and have no club
+                        adminRepository.findAll().forEach(admin -> {
+                            if (admin.getClub() == null && !Boolean.TRUE.equals(admin.getSuperAdmin()) && !"SUPER_ADMIN".equalsIgnoreCase(admin.getRole())) {
+                                admin.setClub(firstClub);
+                                adminRepository.save(admin);
+                            }
+                        });
+                        // Link all Entraineurs who have no club
+                        entraineurRepository.findAll().forEach(entraineur -> {
+                            if (entraineur.getClub() == null) {
+                                entraineur.setClub(firstClub);
+                                entraineurRepository.save(entraineur);
+                            }
+                        });
+                        // Link all Nageurs who have no club
+                        nageurRepository.findAll().forEach(nageur -> {
+                            if (nageur.getClub() == null) {
+                                nageur.setClub(firstClub);
+                                nageurRepository.save(nageur);
+                            }
+                        });
+                    });
+        };
+    }
+
+    private void fixPassword(com.projectmission.model.Utilisateur user, String knownPassword,
+            PasswordEncoder passwordEncoder,
+            NageurRepository nageurRepository,
+            AdminRepository adminRepository,
+            EntraineurRepository entraineurRepository) {
+        if (user == null) return;
+        String hash = user.getMotDePasse();
+        if (hash != null && hash.startsWith("$2y$")) {
+            // Re-encode with Java-compatible BCrypt
+            user.setMotDePasse(passwordEncoder.encode(knownPassword));
+            if (user instanceof com.projectmission.model.Admin admin) {
+                adminRepository.save(admin);
+            } else if (user instanceof com.projectmission.model.Entraineur entraineur) {
+                entraineurRepository.save(entraineur);
+            } else if (user instanceof com.projectmission.model.Nageur nageur) {
+                nageurRepository.save(nageur);
+            }
+        }
     }
 }

@@ -1,0 +1,225 @@
+<main class="nageur-dashboard-container">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title nageur-theme-text">Mon Espace Nageur</h1>
+      <p class="page-sub">Suivi de mes performances chronométriques, assiduité et entraînements.</p>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn btn-emerald" (click)="refresh()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; margin-right: 4px;">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        Actualiser
+      </button>
+    </div>
+  </header>
+
+  <!-- Stats Strip -->
+  <section class="stats-strip" aria-label="Mon bilan de saison">
+    <div class="stat-tile tile-emerald">
+      <div class="stat-tile-icon icon-emerald">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Mes résultats officiels</p>
+      <p class="stat-tile-value">{{ stats()?.resultatsCount ?? 0 }}</p>
+      <p class="stat-tile-foot">Courses nagées</p>
+    </div>
+
+    <div class="stat-tile tile-emerald">
+      <div class="stat-tile-icon icon-emerald">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Mes présences</p>
+      <p class="stat-tile-value">{{ stats()?.presencesCount ?? 0 }}</p>
+      <p class="stat-tile-foot">Entraînements validés</p>
+    </div>
+
+    <div class="stat-tile tile-emerald">
+      <div class="stat-tile-icon icon-emerald">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Prochain entraînement</p>
+      <p class="stat-tile-value stat-tile-value--text">
+        {{ stats()?.nextSeance?.titre ?? 'Aucun' }}
+      </p>
+      <p class="stat-tile-foot">{{ stats()?.nextSeance?.date ?? '—' }}</p>
+    </div>
+
+    <div class="stat-tile tile-emerald">
+      <div class="stat-tile-icon icon-emerald">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Ma catégorie FFN</p>
+      <p class="stat-tile-value stat-tile-value--text">{{ stats()?.categorie ?? '—' }}</p>
+      <p class="stat-tile-foot">Section Club</p>
+    </div>
+  </section>
+
+  <!-- Main Grid Layout -->
+  <div class="dash-grid">
+    <div class="dash-main-col">
+      
+      <!-- Progression Chart -->
+      <section class="dash-card">
+        <div class="panel-head-row" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+          <div>
+            <p class="dash-card-label" style="margin: 0;">Performances</p>
+            <h2 class="dash-card-title" style="margin: 0;">Ma courbe de progression</h2>
+          </div>
+          <div>
+            <select [value]="selectedEvent()" (change)="onEventChange($event)" class="event-select-dropdown" aria-label="Sélectionner l'épreuve à afficher">
+              @for (ev of availableEvents(); track ev) {
+                <option [value]="ev">{{ ev }}</option>
+              } @empty {
+                <option value="">Aucune donnée chronométrique</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        @if (availableEvents().length > 0) {
+          <div style="height: 250px; position: relative;">
+            <canvas #lineCanvas aria-label="Graphique montrant l'évolution de vos temps chronométrés"></canvas>
+          </div>
+        } @else {
+          <div class="empty-chart-fallback">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 48px; height: 48px; color: #9ca3af; margin-bottom: 0.5rem;">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            </svg>
+            <p>Aucun résultat enregistré pour générer le graphique de progression.</p>
+          </div>
+        }
+      </section>
+
+      <!-- Recent Results Table -->
+      <section class="dash-card" style="margin-top: 1.25rem;">
+        <p class="dash-card-label">Palmarès</p>
+        <h2 class="dash-card-title">Dernières courses enregistrées</h2>
+        <p class="dash-page-sub" style="margin-bottom: 1rem;">Vos temps officiels lors des dernières épreuves de compétition.</p>
+
+        <div class="table-wrap">
+          <table class="data-table" aria-label="Mes derniers résultats de compétitions">
+            <thead>
+              <tr>
+                <th scope="col">Style / Distance</th>
+                <th scope="col">Compétition</th>
+                <th scope="col">Classement</th>
+                <th scope="col" style="text-align: right;">Temps final</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (res of stats()?.recentResults; track res.id) {
+                <tr>
+                  <td style="font-weight: 600; color: #1a2f36;">
+                    {{ res.epreuveDistance }}m {{ res.epreuveStyle }}
+                  </td>
+                  <td>{{ res.competitionNom }}</td>
+                  <td>
+                    <span class="badge" [class.badge-gold]="res.classement === 1" [class.badge-silver]="res.classement === 2" [class.badge-bronze]="res.classement === 3" [class.badge-emerald]="res.classement > 3">
+                      #{{ res.classement }}
+                    </span>
+                  </td>
+                  <td style="font-weight: 700; text-align: right; color: #10b981;">
+                    {{ res.temps }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="empty-table-msg">Aucun résultat officiel enregistré pour le moment.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Training Calendar -->
+      <section class="dash-card">
+        <div class="panel-head-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+          <div>
+            <p class="dash-card-label" style="margin: 0;">Calendrier</p>
+            <h2 class="dash-card-title" style="font-size: 1.2rem; margin: 0;">Mes entraînements</h2>
+          </div>
+          <a routerLink="/mon-calendrier" class="btn btn-outline-emerald btn-sm" style="text-decoration: none;">Voir tout</a>
+        </div>
+        <p class="dash-page-sub" style="margin-bottom: 1rem;">Séances du club, votre entraîneur et statut de présence.</p>
+        <app-seance-week-calendar
+          role="nageur"
+          [compact]="true"
+          [showListToggle]="false"
+          [showStats]="false"
+          [showFullPageLink]="false" />
+      </section>
+    </div>
+
+    <!-- Sidebar Column -->
+    <aside class="dash-sidebar-col">
+      <!-- Profile Card -->
+      <section class="dash-card profile-sidebar-card">
+        <app-photo-upload 
+          [photoUrl]="currentUser()?.photoUrl" 
+          accentColor="#10b981" 
+          [uploading]="uploadingPhoto"
+          (photoSelected)="onPhotoSelected($event)">
+        </app-photo-upload>
+        
+        <h3 class="profile-name" style="margin-top: 1rem; font-weight: 700; text-align: center;">
+          {{ currentUser()?.prenom }} {{ currentUser()?.nom }}
+        </h3>
+        <p class="profile-role" style="text-align: center; color: var(--muted); font-size: 0.85rem; font-weight: 500;">
+          Nageur Club
+        </p>
+        
+        <div class="profile-details-list" style="margin-top: 1.25rem;">
+          <div class="detail-row">
+            <span class="detail-label">Club</span>
+            <span class="detail-value" style="font-weight: 600;">{{ currentUser()?.clubNom ?? '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Catégorie</span>
+            <span class="detail-value" style="font-weight: 600; color: #10b981;">{{ stats()?.categorie ?? '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ currentUser()?.email }}</span>
+          </div>
+        </div>
+        
+        <a routerLink="/profile" class="btn btn-outline-emerald" style="width: 100%; margin-top: 1.25rem; text-decoration: none; display: block; text-align: center;">
+          Gérer mon profil
+        </a>
+      </section>
+
+      <!-- Personal Records (Bests) -->
+      <section class="dash-card">
+        <p class="dash-card-label">Performances</p>
+        <h2 class="dash-card-title" style="font-size: 1.05rem; margin-bottom: 0.75rem;">Mes Records Personnels</h2>
+        
+        <div class="records-sidebar-list" aria-label="Liste de mes records personnels">
+          @for (rec of stats()?.personalRecords; track rec.epreuveLabel) {
+            <div class="record-sidebar-item">
+              <div class="record-sidebar-main">
+                <p class="record-sidebar-title">{{ rec.epreuveLabel }}</p>
+                <p class="record-sidebar-meta">{{ rec.date }}</p>
+              </div>
+              <span class="record-sidebar-time">{{ rec.temps }}</span>
+            </div>
+          } @empty {
+            <p class="requests-empty">Aucun record enregistré pour le moment.</p>
+          }
+        </div>
+      </section>
+    </aside>
+  </div>
+</main>

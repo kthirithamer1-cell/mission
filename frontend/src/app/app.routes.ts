@@ -48,12 +48,33 @@ export const routes: Routes = [
         (m) => m.AdminShellComponent
       ),
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./pages/dashboard/dashboard-redirect.component').then(
+            (m) => m.DashboardRedirectComponent
+          ),
+      },
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./pages/admin/admin-dashboard/admin-dashboard.component').then(
             (m) => m.AdminDashboardComponent
+          ),
+      },
+      {
+        path: 'coach-dashboard',
+        loadComponent: () =>
+          import('./pages/coach/coach-dashboard/coach-dashboard.component').then(
+            (m) => m.CoachDashboardComponent
+          ),
+      },
+      {
+        path: 'nageur-dashboard',
+        loadComponent: () =>
+          import('./pages/nageur/nageur-dashboard/nageur-dashboard.component').then(
+            (m) => m.NageurDashboardComponent
           ),
       },
       {
@@ -96,6 +117,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/coach/coach-planning/coach-planning.component').then(
             (m) => m.CoachPlanningComponent
+          ),
+      },
+      {
+        path: 'mon-calendrier',
+        loadComponent: () =>
+          import('./pages/nageur/nageur-planning/nageur-planning.component').then(
+            (m) => m.NageurPlanningComponent
+          ),
+      },
+      {
+        path: 'clubs',
+        loadComponent: () =>
+          import('./pages/nageur/nageur-clubs/nageur-clubs.component').then(
+            (m) => m.NageurClubsComponent
           ),
       },
       {

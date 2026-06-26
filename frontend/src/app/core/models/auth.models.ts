@@ -9,6 +9,7 @@ export interface Utilisateur {
   role: UserRole | string;
   clubId?: number;
   clubNom?: string;
+  photoUrl?: string;
 }
 
 export interface LoginRequest {

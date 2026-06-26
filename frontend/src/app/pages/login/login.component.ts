@@ -42,10 +42,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.loading.set(true);
     this.auth.login({ email, motDePasse: this.motDePasse }).subscribe({
-      next: () => {
+      next: (res) => {
         this.alertType.set('success');
         this.alertMessage.set('Connexion réussie. Redirection…');
-        setTimeout(() => this.router.navigate(['/dashboard']), 500);
+        const target = this.auth.dashboardRouteForRole(res.utilisateur.role);
+        setTimeout(() => this.router.navigate([target]), 350);
       },
       error: (err) => {
         this.showError(AuthService.parseError(err));
