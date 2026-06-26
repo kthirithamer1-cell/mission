@@ -15,7 +15,25 @@ public class CompetitionController {
     private CompetitionService service;
 
     @GetMapping
-    public ResponseEntity<List<CompetitionDTO>> getAll() { return ResponseEntity.ok(service.getAll()); }
+    public ResponseEntity<List<CompetitionDTO>> getAll(
+            @RequestParam(required = false) String statut,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String saison) {
+        if (statut != null) return ResponseEntity.ok(service.getByStatut(statut));
+        if (type != null) return ResponseEntity.ok(service.getByType(type));
+        if (saison != null) return ResponseEntity.ok(service.getBySaison(saison));
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/en-cours")
+    public ResponseEntity<List<CompetitionDTO>> getEnCours() {
+        return ResponseEntity.ok(service.getEnCours());
+    }
+
+    @GetMapping("/a-venir")
+    public ResponseEntity<List<CompetitionDTO>> getAVenir() {
+        return ResponseEntity.ok(service.getAVenir());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
@@ -24,7 +42,9 @@ public class CompetitionController {
     }
 
     @PostMapping
-    public ResponseEntity<CompetitionDTO> create(@RequestBody CompetitionDTO dto) { return ResponseEntity.ok(service.create(dto)); }
+    public ResponseEntity<CompetitionDTO> create(@RequestBody CompetitionDTO dto) {
+        return ResponseEntity.ok(service.create(dto));
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody CompetitionDTO dto) {

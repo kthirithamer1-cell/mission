@@ -80,6 +80,14 @@ export interface DashboardStats {
   records: RecordDTO[];
 }
 
+export interface Epreuve {
+  id?: number;
+  distance: number;
+  style: string;
+  categorie: string;
+  competitionId?: number;
+}
+
 export interface ResultDetailDTO {
   id: number;
   temps: string;

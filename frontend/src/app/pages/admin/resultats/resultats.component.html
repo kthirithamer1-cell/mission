@@ -1,15 +1,17 @@
 <main class="dash-page-main">
+  <!-- Hero Section -->
   <section class="comp-hero dash-card" aria-labelledby="comp-title">
     <div class="comp-hero-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="currentColor">
         <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.5 3.89 3.17 7.06 6.61 7.06s6.11-3.17 6.61-7.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zm-2 0v2H7V5h10zm-2 14h-2v2H9v-2H7v-2h10v2z" />
       </svg>
     </div>
-    <p class="dash-card-label">Compétitions</p>
-    <h1 id="comp-title" class="dash-card-title">Compétitions de Natation</h1>
-    <p class="comp-hero-sub">Parcourez tous les résultats des championnats et compétitions</p>
+    <p class="dash-card-label">Résultats Officiels</p>
+    <h1 id="comp-title" class="dash-card-title">Résultats des Compétitions</h1>
+    <p class="comp-hero-sub">Parcourez les performances de nos nageurs lors des différents championnats</p>
   </section>
 
+  <!-- Toolbar Section -->
   <section class="comp-toolbar dash-card" aria-label="Recherche et filtres">
     <label class="comp-search">
       <span class="comp-search-icon">
@@ -18,10 +20,17 @@
           <path d="M20 20l-3-3" stroke-linecap="round" />
         </svg>
       </span>
-      <input type="search" class="comp-search-input" placeholder="Rechercher des compétitions..." autocomplete="off" />
+      <input 
+        type="search" 
+        class="comp-search-input" 
+        placeholder="Rechercher une compétition..." 
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        autocomplete="off" 
+      />
     </label>
     <div class="comp-years" role="group" aria-label="Filtrer par année">
-      @for (y of ['Toutes', '2024', '2023', '2022', '2021', '2020']; track y) {
+      @for (y of ['Toutes', '2026', '2025', '2024', '2023']; track y) {
         <button
           type="button"
           class="year-pill"
@@ -34,65 +43,132 @@
     </div>
   </section>
 
+  <!-- Competitions List columns -->
   <div class="comp-columns">
-    <section class="season-column dash-card" aria-labelledby="season-2324">
-      <header class="season-head">
-        <h2 id="season-2324" class="season-title">Résultats Saison 2023-2024</h2>
-        <span class="season-badge">compétitions</span>
-      </header>
-      <div class="season-list">
-        <article class="comp-card-item">
-          <div>
-            <h3 class="comp-card-title">Résultats Championnat TC 25m</h3>
-            <p class="comp-card-cat">Championship</p>
-          </div>
-          <button type="button" class="comp-card-btn" (click)="viewResults('Championnat TC 25m')">Voir les résultats</button>
-        </article>
-        <article class="comp-card-item">
-          <div>
-            <h3 class="comp-card-title">Résultats Championnat D'hiver benjamins</h3>
-            <p class="comp-card-cat">Youth Category</p>
-          </div>
-          <button type="button" class="comp-card-btn" (click)="viewResults('Championnat hiver benjamins')">Voir les résultats</button>
-        </article>
-        <article class="comp-card-item">
-          <div>
-            <h3 class="comp-card-title">Coupe interclubs — phase finale</h3>
-            <p class="comp-card-cat">Cup</p>
-          </div>
-          <button type="button" class="comp-card-btn" (click)="viewResults('Coupe interclubs')">Voir les résultats</button>
-        </article>
+    @if (competitionsBySeason().length === 0) {
+      <div class="dash-card" style="grid-column: span 12; text-align: center; padding: 40px; color: var(--text-secondary);">
+        Aucune compétition terminée trouvée pour cette sélection.
       </div>
-    </section>
+    }
 
-    <section class="season-column dash-card" aria-labelledby="season-2223">
-      <header class="season-head">
-        <h2 id="season-2223" class="season-title">Résultats Saison 2022-2023</h2>
-        <span class="season-badge">compétitions</span>
-      </header>
-      <div class="season-list">
-        <article class="comp-card-item">
-          <div>
-            <h3 class="comp-card-title">Championnat régional cadets</h3>
-            <p class="comp-card-cat">Championship</p>
-          </div>
-          <button type="button" class="comp-card-btn" (click)="viewResults('Championnat régional cadets')">Voir les résultats</button>
-        </article>
-        <article class="comp-card-item">
-          <div>
-            <h3 class="comp-card-title">Meeting national — bassin 50m</h3>
-            <p class="comp-card-cat">Cup</p>
-          </div>
-          <button type="button" class="comp-card-btn" (click)="viewResults('Meeting national')">Voir les résultats</button>
-        </article>
-        <article class="comp-card-item">
-          <div>
-            <h3 class="comp-card-title">Critérium minimes printemps</h3>
-            <p class="comp-card-cat">Youth Category</p>
-          </div>
-          <button type="button" class="comp-card-btn" (click)="viewResults('Critérium minimes')">Voir les résultats</button>
-        </article>
-      </div>
-    </section>
+    @for (seasonGroup of competitionsBySeason(); track seasonGroup[0]) {
+      <section class="season-column dash-card" [attr.aria-labelledby]="'season-' + seasonGroup[0]">
+        <header class="season-head">
+          <h2 [id]="'season-' + seasonGroup[0]" class="season-title">Saison {{ seasonGroup[0] }}</h2>
+          <span class="season-badge">{{ seasonGroup[1].length }} compétitions</span>
+        </header>
+        <div class="season-list">
+          @for (comp of seasonGroup[1]; track comp.id) {
+            <article class="comp-card-item">
+              <div style="flex: 1; min-width: 0;">
+                <h3 class="comp-card-title">{{ comp.nom }}</h3>
+                <p class="comp-card-cat" style="font-size: 0.8rem; margin: 4px 0 2px; color: var(--text-secondary);">
+                  📍 {{ comp.lieu }} | 🗓️ {{ comp.dateDebut | date:'shortDate' }}
+                </p>
+                <span class="badge" style="font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary);">
+                  {{ comp.type }}
+                </span>
+              </div>
+              <button 
+                type="button" 
+                class="comp-card-btn" 
+                style="padding: 8px 16px; font-weight: 600; border-radius: 6px; border: 1px solid var(--primary); background: transparent; color: var(--primary); transition: all 0.2s;"
+                (click)="viewResults(comp)"
+              >
+                Voir les résultats
+              </button>
+            </article>
+          }
+        </div>
+      </section>
+    }
   </div>
+
+  <!-- Results Table Overlay Modal -->
+  @if (selectedCompetition()) {
+    <div class="modal-backdrop" (click)="closeResults()"></div>
+    <div class="modal-card active" style="max-width: 900px; width: 95%;">
+      <div class="modal-header">
+        <div>
+          <span class="badge-active" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">
+            {{ selectedCompetition()?.type }}
+          </span>
+          <h2 class="modal-title" style="margin-top: 5px;">{{ selectedCompetition()?.nom }}</h2>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 2px 0 0;">
+            📍 {{ selectedCompetition()?.lieu }} | 🗓️ {{ selectedCompetition()?.dateDebut | date }} au {{ selectedCompetition()?.dateFin | date }}
+          </p>
+        </div>
+        <button type="button" class="btn-close" aria-label="Fermer" (click)="closeResults()">×</button>
+      </div>
+      
+      <div class="modal-body" style="padding-top: 10px;">
+        <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+          <input 
+            type="search" 
+            class="comp-search-input" 
+            style="width: 100%; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px;"
+            placeholder="Filtrer par nageur ou épreuve (ex: 100m)..."
+            [ngModel]="searchResultQuery()"
+            (ngModelChange)="searchResultQuery.set($event)"
+          />
+        </div>
+
+        <div style="overflow-x: auto; max-height: 400px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+            <thead>
+              <tr style="background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); text-align: left;">
+                <th style="padding: 12px;">Rang</th>
+                <th style="padding: 12px;">Nageur</th>
+                <th style="padding: 12px;">Épreuve</th>
+                <th style="padding: 12px;">Temps</th>
+                <th style="padding: 12px;">Points FINA</th>
+                <th style="padding: 12px;">Record Club</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (filteredResults().length === 0) {
+                <tr>
+                  <td colspan="6" style="padding: 24px; text-align: center; color: var(--text-secondary);">
+                    Aucun résultat trouvé pour cette compétition.
+                  </td>
+                </tr>
+              }
+              @for (res of filteredResults(); track res.id) {
+                <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.15s; hover: background: var(--bg-hover);">
+                  <td style="padding: 12px; font-weight: bold;">
+                    @if (res.classement === 1) {
+                      🥇 <span style="color: #d4af37;">1er</span>
+                    } @else if (res.classement === 2) {
+                      🥈 <span style="color: #a0a0a0;">2ème</span>
+                    } @else if (res.classement === 3) {
+                      🥉 <span style="color: #cd7f32;">3ème</span>
+                    } @else {
+                      {{ res.classement }}
+                    }
+                  </td>
+                  <td style="padding: 12px; font-weight: 500; color: var(--text-primary);">{{ res.nageurNom }}</td>
+                  <td style="padding: 12px; color: var(--text-secondary);">{{ res.epreuveNom }}</td>
+                  <td style="padding: 12px; font-family: monospace; font-weight: bold; color: var(--primary);">{{ res.temps }}</td>
+                  <td style="padding: 12px; font-weight: 600;">{{ res.points || 'N/A' }}</td>
+                  <td style="padding: 12px;">
+                    @if (res.record) {
+                      <span class="badge" style="background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">
+                        Record ⭐
+                      </span>
+                    } @else {
+                      -
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; padding-top: 15px; border-top: 1px solid var(--border-color);">
+        <button type="button" class="btn btn-secondary" style="padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer;" (click)="closeResults()">Fermer</button>
+      </div>
+    </div>
+  }
 </main>

@@ -1,0 +1,207 @@
+<main class="dash-page-main">
+  <!-- Hero Section -->
+  <section class="comp-hero dash-card" aria-labelledby="stats-title">
+    <div class="comp-hero-icon" aria-hidden="true" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width: 32px; height: 32px;">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+      </svg>
+    </div>
+    <p class="dash-card-label">Analyses & Performances</p>
+    <h1 id="stats-title" class="dash-card-title">Tableau de Bord Statistique</h1>
+    <p class="comp-hero-sub">Suivez les performances globales du club et la progression de nos athlètes.</p>
+  </section>
+
+  <!-- CLUB STATISTICS SECTION -->
+  <h2 style="font-size: 1.4rem; font-weight: bold; margin: 30px 0 15px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+    <span>🏆</span> Performances Globales du Club
+  </h2>
+
+  <!-- Stats Grid Counters -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px;">
+    <div class="dash-card" style="display: flex; align-items: center; gap: 15px; padding: 20px;">
+      <div style="font-size: 2.2rem; background: rgba(99, 102, 241, 0.1); color: #6366f1; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 12px;">📅</div>
+      <div>
+        <h3 style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 4px; font-weight: 500;">Compétitions</h3>
+        <p style="font-size: 1.8rem; font-weight: 800; margin: 0; color: var(--text-primary);">{{ clubStats()?.totalCompetitions || 0 }}</p>
+      </div>
+    </div>
+    <div class="dash-card" style="display: flex; align-items: center; gap: 15px; padding: 20px;">
+      <div style="font-size: 2.2rem; background: rgba(16, 185, 129, 0.1); color: #10b981; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 12px;">🏊</div>
+      <div>
+        <h3 style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 4px; font-weight: 500;">Courses disputées</h3>
+        <p style="font-size: 1.8rem; font-weight: 800; margin: 0; color: var(--text-primary);">{{ clubStats()?.totalResultats || 0 }}</p>
+      </div>
+    </div>
+    <div class="dash-card" style="display: flex; align-items: center; gap: 15px; padding: 20px;">
+      <div style="font-size: 2.2rem; background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 12px;">⭐</div>
+      <div>
+        <h3 style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 4px; font-weight: 500;">Records du Club</h3>
+        <p style="font-size: 1.8rem; font-weight: 800; margin: 0; color: var(--text-primary);">{{ clubStats()?.totalRecords || 0 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <!-- Top Swimmers Leaderboard -->
+    <div class="dash-card" style="padding: 20px;">
+      <h3 style="font-size: 1.1rem; font-weight: bold; margin: 0 0 15px; color: var(--text-primary);">Top 5 Swimmers du Club</h3>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+              <th style="padding: 10px 5px;">Rang</th>
+              <th style="padding: 10px;">Nageur</th>
+              <th style="padding: 10px; text-align: center;">Medailles d'Or</th>
+              <th style="padding: 10px; text-align: right;">Total Points FINA</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (!clubStats() || clubStats()?.topSwimmers?.length === 0) {
+              <tr>
+                <td colspan="4" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+                  Aucune donnée disponible.
+                </td>
+              </tr>
+            }
+            @for (swimmer of clubStats()?.topSwimmers; track swimmer.nageurNom; let i = $index) {
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px 5px; font-weight: bold; color: var(--primary);">#{{ i + 1 }}</td>
+                <td style="padding: 10px; font-weight: 600; color: var(--text-primary);">{{ swimmer.nageurNom }}</td>
+                <td style="padding: 10px; text-align: center; font-weight: bold; color: #f59e0b;">
+                  🥇 {{ swimmer.totalMedaillesOr }}
+                </td>
+                <td style="padding: 10px; text-align: right; font-weight: bold; font-family: monospace;">{{ swimmer.totalPoints }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Club Style Distribution Chart -->
+    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column;">
+      <h3 style="font-size: 1.1rem; font-weight: bold; margin: 0 0 15px; color: var(--text-primary);">Répartition des Épreuves par Style</h3>
+      <div style="flex: 1; min-height: 220px; position: relative;">
+        <canvas #stylesCanvas></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDIVIDUAL SWIMMER PERFORMANCE SECTION -->
+  <h2 style="font-size: 1.4rem; font-weight: bold; margin: 40px 0 15px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 30px;">
+    <span>👤</span> Performances Individuelles & Progression
+  </h2>
+
+  <!-- Swimmer Selection Dropdown -->
+  <div class="dash-card" style="padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <label for="swimmerSelect" style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary);">Sélectionner un athlète :</label>
+      <select 
+        id="swimmerSelect"
+        [ngModel]="selectedSwimmerId()"
+        (ngModelChange)="selectSwimmer($event)"
+        style="padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-size: 0.95rem; font-weight: bold; outline: none;"
+      >
+        @for (swimmer of swimmers(); track swimmer.id) {
+          <option [value]="swimmer.id">{{ swimmer.prenom }} {{ swimmer.nom }}</option>
+        }
+      </select>
+    </div>
+    @if (swimmerStats()) {
+      <div style="font-size: 0.9rem; color: var(--text-secondary); font-style: italic;">
+        {{ swimmerStats()?.totalCourses }} courses disputées au total
+      </div>
+    }
+  </div>
+
+  @if (swimmerStats()) {
+    <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+      
+      <!-- Swimmer Mini Dashboard Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div class="dash-card" style="padding: 15px; text-align: center; border-left: 4px solid #f59e0b;">
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 5px;">Medailles d'Or</h4>
+          <p style="font-size: 1.6rem; font-weight: bold; margin: 0; color: #f59e0b;">🥇 {{ swimmerStats()?.medaillesOr }}</p>
+        </div>
+        <div class="dash-card" style="padding: 15px; text-align: center; border-left: 4px solid #94a3b8;">
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 5px;">Medailles d'Argent</h4>
+          <p style="font-size: 1.6rem; font-weight: bold; margin: 0; color: #94a3b8;">🥈 {{ swimmerStats()?.medaillesArgent }}</p>
+        </div>
+        <div class="dash-card" style="padding: 15px; text-align: center; border-left: 4px solid #b45309;">
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 5px;">Medailles de Bronze</h4>
+          <p style="font-size: 1.6rem; font-weight: bold; margin: 0; color: #b45309;">🥉 {{ swimmerStats()?.medaillesBronze }}</p>
+        </div>
+        <div class="dash-card" style="padding: 15px; text-align: center; border-left: 4px solid #6366f1;">
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 5px;">Moyenne FINA</h4>
+          <p style="font-size: 1.6rem; font-weight: bold; margin: 0; color: #6366f1;">🏊 {{ swimmerStats()?.averagePoints | number:'1.0-1' }} pts</p>
+        </div>
+      </div>
+
+      <!-- Progression Graph & Records -->
+      <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; align-items: start; flex-wrap: wrap;">
+        
+        <!-- Progression Line Chart -->
+        <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; height: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="font-size: 1.1rem; font-weight: bold; margin: 0; color: var(--text-primary);">Évolution des Performances</h3>
+            
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="eventSelect" style="font-size: 0.85rem; color: var(--text-secondary);">Épreuve :</label>
+              <select 
+                id="eventSelect"
+                [ngModel]="selectedEvent()"
+                (ngModelChange)="onEventChange($event)"
+                style="padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-size: 0.85rem; font-weight: 600;"
+              >
+                @for (ev of swimmerEvents(); track ev) {
+                  <option [value]="ev">{{ ev }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          
+          <div style="flex: 1; min-height: 250px; position: relative;">
+            @if (swimmerEvents().length === 0) {
+              <div style="position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); color: var(--text-secondary); font-style: italic;">
+                Aucun résultat enregistré pour cet athlète.
+              </div>
+            } @else {
+              <canvas #progressionCanvas></canvas>
+            }
+          </div>
+        </div>
+
+        <!-- Swimmer Personal Records -->
+        <div class="dash-card" style="padding: 20px;">
+          <h3 style="font-size: 1.1rem; font-weight: bold; margin: 0 0 15px; color: var(--text-primary);">Records Personnels du Nageur (Records Club)</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            @if (swimmerStats()?.recordsPersonnels?.length === 0) {
+              <p style="color: var(--text-secondary); font-style: italic; font-size: 0.9rem; text-align: center; padding: 20px;">
+                Aucun record de club homologué pour cet athlète.
+              </p>
+            }
+            @for (rec of swimmerStats()?.recordsPersonnels; track rec.id) {
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(var(--primary-rgb), 0.03); border-radius: 8px; border: 1px solid var(--border-color);">
+                <div>
+                  <h4 style="font-size: 0.95rem; font-weight: bold; margin: 0 0 2px; color: var(--text-primary);">{{ rec.epreuveNom }}</h4>
+                  <span style="font-size: 0.75rem; color: var(--text-secondary);">🗓️ {{ rec.dateCompetition | date:'shortDate' }} | {{ rec.competitionNom }}</span>
+                </div>
+                <div style="text-align: right;">
+                  <p style="font-family: monospace; font-size: 1.05rem; font-weight: bold; color: var(--primary); margin: 0 0 2px;">{{ rec.temps }}</p>
+                  <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">⭐ {{ rec.points }} pts</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  } @else {
+    <div class="dash-card" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+      Sélectionnez un athlète pour charger ses statistiques.
+    </div>
+  }
+</main>

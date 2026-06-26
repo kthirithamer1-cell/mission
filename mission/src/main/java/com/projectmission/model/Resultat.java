@@ -1,6 +1,7 @@
 package com.projectmission.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "resultat")
@@ -11,6 +12,9 @@ public class Resultat {
 
     private String temps;
     private Integer classement;
+    private Integer points;
+    private Boolean record;
+    private LocalDate dateCompetition;
 
     @ManyToOne
     @JoinColumn(name = "nageur_id")
@@ -26,6 +30,12 @@ public class Resultat {
     public void setTemps(String temps) { this.temps = temps; }
     public Integer getClassement() { return classement; }
     public void setClassement(Integer classement) { this.classement = classement; }
+    public Integer getPoints() { return points; }
+    public void setPoints(Integer points) { this.points = points; }
+    public Boolean getRecord() { return record; }
+    public void setRecord(Boolean record) { this.record = record; }
+    public LocalDate getDateCompetition() { return dateCompetition; }
+    public void setDateCompetition(LocalDate dateCompetition) { this.dateCompetition = dateCompetition; }
     public Nageur getNageur() { return nageur; }
     public void setNageur(Nageur nageur) { this.nageur = nageur; }
     public Epreuve getEpreuve() { return epreuve; }

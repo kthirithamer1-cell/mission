@@ -1,0 +1,296 @@
+<main class="dash-page-main">
+  <!-- Hero / Header -->
+  <section class="comp-hero dash-card" aria-labelledby="comp-title">
+    <div class="comp-hero-icon" aria-hidden="true" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary);">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width: 32px; height: 32px;">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+      </svg>
+    </div>
+    <p class="dash-card-label">Gestion administrative</p>
+    <h1 id="comp-title" class="dash-card-title">Compétitions Locales & Régionales</h1>
+    <p class="comp-hero-sub">Planifiez les compétitions, gérez les détails et suivez les statuts de déroulement.</p>
+  </section>
+
+  <!-- Toolbar & Actions -->
+  <section class="comp-toolbar dash-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+      <div>
+        <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Statut</label>
+        <select 
+          [ngModel]="filterStatut()" 
+          (ngModelChange)="filterStatut.set($event)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-size: 0.9rem;"
+        >
+          <option value="TOUS">Tous les statuts</option>
+          <option value="A_VENIR">À venir</option>
+          <option value="EN_COURS">En cours 🔴</option>
+          <option value="TERMINE">Terminée</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Type</label>
+        <select 
+          [ngModel]="filterType()" 
+          (ngModelChange)="filterType.set($event)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-size: 0.9rem;"
+        >
+          <option value="TOUS">Tous les types</option>
+          <option value="CHAMPIONNAT">Championnats</option>
+          <option value="COUPE">Coupes</option>
+          <option value="MEETING">Meetings</option>
+          <option value="CRITÉRIUM">Critérium</option>
+        </select>
+      </div>
+    </div>
+    
+    <button 
+      type="button" 
+      class="btn btn-primary" 
+      style="padding: 10px 20px; font-weight: bold; background: var(--primary); border: none; color: white; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;"
+      (click)="openAddModal()"
+    >
+      <span>+</span> Nouvelle Compétition
+    </button>
+  </section>
+
+  <!-- Grid List -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px;">
+    @if (getFilteredCompetitions().length === 0) {
+      <div class="dash-card" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-secondary);">
+        Aucune compétition ne correspond à vos filtres.
+      </div>
+    }
+
+    @for (comp of getFilteredCompetitions(); track comp.id) {
+      <article class="dash-card" style="display: flex; flexDirection: column; justify-content: space-between; padding: 20px; position: relative;">
+        <!-- Status Badge absolute top-right -->
+        <div style="position: absolute; top: 15px; right: 15px;">
+          <span [class]="getStatusBadgeClass(comp.statut)" style="font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px;">
+            {{ getStatusText(comp.statut) }}
+          </span>
+        </div>
+
+        <div>
+          <!-- Type Badge -->
+          <span style="font-size: 0.7rem; font-weight: bold; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">
+            {{ comp.type }} ({{ comp.niveau }})
+          </span>
+          <h2 style="font-size: 1.25rem; font-weight: bold; margin: 0 0 10px; color: var(--text-primary); padding-right: 80px;">{{ comp.nom }}</h2>
+          
+          <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span>📍</span> <span>{{ comp.lieu }}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span>🗓️</span> <span>Du {{ comp.dateDebut | date:'shortDate' }} au {{ comp.dateFin | date:'shortDate' }}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span>🏆</span> <span>Organisé par : {{ comp.organisateur }}</span>
+            </div>
+            @if (comp.saison) {
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span>🏊</span> <span>Saison : {{ comp.saison }}</span>
+              </div>
+            }
+          </div>
+          @if (comp.description) {
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; border-top: 1px dashed var(--border-color); padding-top: 10px; margin: 0 0 15px;">
+              {{ comp.description }}
+            </p>
+          }
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 10px;">
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            style="padding: 6px 12px; font-size: 0.85rem; border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 4px; cursor: pointer; color: var(--text-primary);"
+            (click)="openEditModal(comp)"
+          >
+            Modifier
+          </button>
+          <button 
+            type="button" 
+            class="btn" 
+            style="padding: 6px 12px; font-size: 0.85rem; border: 1px solid #ef4444; background: transparent; color: #ef4444; border-radius: 4px; cursor: pointer; transition: background 0.2s;"
+            (mouseenter)="$any($event.target).style.background='rgba(239,68,68,0.1)'"
+            (mouseleave)="$any($event.target).style.background='transparent'"
+            (click)="deleteCompetition(comp.id!)"
+          >
+            Supprimer
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+
+  <!-- CRUD Modal -->
+  @if (showModal()) {
+    <div class="modal-backdrop" (click)="closeModal()"></div>
+    <div class="modal-card active" style="max-width: 550px; width: 90%;">
+      <div class="modal-header">
+        <h2 class="modal-title">{{ isEditMode() ? 'Modifier la Compétition' : 'Ajouter une Compétition' }}</h2>
+        <button type="button" class="btn-close" (click)="closeModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <form (ngSubmit)="saveCompetition()" style="display: flex; flex-direction: column; gap: 12px;">
+          
+          <div>
+            <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Nom de la compétition *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+              [(ngModel)]="formCompetition().nom" 
+              name="nom" 
+              required 
+            />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Lieu *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().lieu" 
+                name="lieu" 
+                required 
+              />
+            </div>
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Saison *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Ex: 2025-2026"
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().saison" 
+                name="saison" 
+                required 
+              />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Date de début *</label>
+              <input 
+                type="date" 
+                class="form-control" 
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().dateDebut" 
+                name="dateDebut" 
+                required 
+              />
+            </div>
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Date de fin *</label>
+              <input 
+                type="date" 
+                class="form-control" 
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().dateFin" 
+                name="dateFin" 
+                required 
+              />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Type *</label>
+              <select 
+                class="form-control" 
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().type" 
+                name="type" 
+                required
+              >
+                <option value="CHAMPIONNAT">Championnat</option>
+                <option value="COUPE">Coupe</option>
+                <option value="MEETING">Meeting</option>
+                <option value="CRITÉRIUM">Critérium</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Statut *</label>
+              <select 
+                class="form-control" 
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().statut" 
+                name="statut" 
+                required
+              >
+                <option value="A_VENIR">À venir</option>
+                <option value="EN_COURS">En cours</option>
+                <option value="TERMINE">Terminée</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Niveau *</label>
+              <select 
+                class="form-control" 
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().niveau" 
+                name="niveau" 
+                required
+              >
+                <option value="LOCAL">Local</option>
+                <option value="REGIONAL">Régional</option>
+                <option value="NATIONAL">National</option>
+                <option value="INTERNATIONAL">International</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Organisateur *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);"
+                [(ngModel)]="formCompetition().organisateur" 
+                name="organisateur" 
+                required 
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 4px; font-weight: 500;">Description</label>
+            <textarea 
+              class="form-control" 
+              rows="3"
+              style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary); font-family: inherit;"
+              [(ngModel)]="formCompetition().description" 
+              name="description"
+            ></textarea>
+          </div>
+
+          <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+            <button 
+              type="button" 
+              class="btn btn-secondary" 
+              style="padding: 8px 16px; border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 4px; cursor: pointer; color: var(--text-primary);"
+              (click)="closeModal()"
+            >
+              Annuler
+            </button>
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              style="padding: 8px 16px; background: var(--primary); border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;"
+            >
+              Enregistrer
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  }
+</main>
