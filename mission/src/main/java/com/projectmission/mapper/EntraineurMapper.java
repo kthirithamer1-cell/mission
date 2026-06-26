@@ -25,6 +25,7 @@ public class EntraineurMapper {
             dto.setClubId(entity.getClub().getId());
             dto.setClubNom(entity.getClub().getNom());
         }
+        dto.setPhotoUrl(entity.getPhotoUrl());
         return dto;
     }
 
@@ -38,6 +39,7 @@ public class EntraineurMapper {
         entity.setMotDePasse(dto.getMotDePasse());
         entity.setRole(dto.getRole() != null ? dto.getRole() : "ENTRAINEUR");
         entity.setGroupes(dto.getGroupes());
+        entity.setPhotoUrl(dto.getPhotoUrl());
         if (dto.getClubId() != null) {
             Club club = clubRepository.findById(dto.getClubId()).orElse(null);
             entity.setClub(club);

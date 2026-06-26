@@ -1,0 +1,138 @@
+<main class="clubs-page">
+  <header class="clubs-head">
+    <div>
+      <p class="clubs-eyebrow">Clubs</p>
+      <h1>Explorer les clubs</h1>
+      <p>Choisissez un club, consultez ses coaches et suivez celui qui correspond a votre saison.</p>
+    </div>
+    <div class="current-club">
+      <span>Club suivi</span>
+      <strong>{{ currentUser()?.clubNom ?? 'Aucun club' }}</strong>
+    </div>
+  </header>
+
+  <section class="clubs-layout">
+    <aside class="clubs-list-panel" aria-label="Liste des clubs">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input
+          type="search"
+          placeholder="Rechercher un club"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          aria-label="Rechercher un club"
+        />
+      </div>
+
+      @if (loading()) {
+        <div class="loading-block">Chargement des clubs...</div>
+      } @else {
+        <div class="club-list">
+          @for (club of filteredClubs(); track trackByClub($index, club)) {
+            <button
+              type="button"
+              class="club-row"
+              [class.active]="club.id === selectedClubId()"
+              [class.followed]="isFollowing(club)"
+              (click)="selectClub(club)"
+            >
+              <span class="club-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2 3 9v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9l-9-7Zm3 18H9v-7h6v7Z" />
+                </svg>
+              </span>
+              <span class="club-row-copy">
+                <strong>{{ club.nom }}</strong>
+                <small>{{ club.adresse ?? 'Adresse non renseignee' }}</small>
+              </span>
+              @if (isFollowing(club)) {
+                <span class="follow-chip">Suivi</span>
+              }
+            </button>
+          } @empty {
+            <p class="empty-state">Aucun club trouve.</p>
+          }
+        </div>
+      }
+    </aside>
+
+    <section class="club-detail-panel" aria-label="Details du club">
+      @if (selectedClub(); as club) {
+        <div class="club-detail-head">
+          <div>
+            <p class="clubs-eyebrow">Club selectionne</p>
+            <h2>{{ club.nom }}</h2>
+            <p>{{ club.adresse ?? 'Adresse non renseignee' }}</p>
+          </div>
+          <button
+            type="button"
+            class="follow-btn"
+            [class.is-following]="isFollowing(club)"
+            [disabled]="following() || isFollowing(club)"
+            (click)="followClub(club)"
+          >
+            @if (following()) {
+              <span class="btn-spinner"></span>
+              <span>Suivi...</span>
+            } @else if (isFollowing(club)) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5"></path>
+              </svg>
+              <span>Club suivi</span>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M12 5v14M5 12h14"></path>
+              </svg>
+              <span>Follow</span>
+            }
+          </button>
+        </div>
+
+        <div class="club-info-strip">
+          <div>
+            <span>Date affiliation</span>
+            <strong>{{ club.dateAffiliation ?? 'Non renseignee' }}</strong>
+          </div>
+          <div>
+            <span>Coaches</span>
+            <strong>{{ coaches().length }}</strong>
+          </div>
+        </div>
+
+        <div class="coaches-head">
+          <h3>Coaches du club</h3>
+        </div>
+
+        @if (loadingCoaches()) {
+          <div class="loading-block">Chargement des coaches...</div>
+        } @else {
+          <div class="coach-grid">
+            @for (coach of coaches(); track coach.id) {
+              <article class="coach-card">
+                <div class="coach-photo">
+                  @if (coach.photoUrl) {
+                    <img [src]="coach.photoUrl" [alt]="coach.prenom + ' ' + coach.nom" />
+                  } @else {
+                    <span>{{ initials(coach) }}</span>
+                  }
+                </div>
+                <div class="coach-copy">
+                  <h4>{{ coach.prenom }} {{ coach.nom }}</h4>
+                  <p>{{ coach.groupes || 'Groupes non renseignes' }}</p>
+                  <a [href]="'mailto:' + coach.email">{{ coach.email }}</a>
+                </div>
+              </article>
+            } @empty {
+              <p class="empty-state">Aucun coach n'est encore rattache a ce club.</p>
+            }
+          </div>
+        }
+      } @else {
+        <div class="empty-detail">Selectionnez un club pour voir ses coaches.</div>
+      }
+    </section>
+  </section>
+</main>

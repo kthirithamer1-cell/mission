@@ -14,6 +14,9 @@ public class EntraineurController {
     @Autowired
     private EntraineurService service;
 
+    @Autowired
+    private com.projectmission.service.FileStorageService fileStorageService;
+
     @GetMapping
     public ResponseEntity<List<EntraineurDTO>> getAll() {
         return ResponseEntity.ok(service.getAllForCurrentUser());
@@ -51,6 +54,13 @@ public class EntraineurController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         service.delete(id);
-        return ResponseEntity.ok("Entra├«neur supprim├⌐");
+        return ResponseEntity.ok("Entraîneur supprimé");
+    }
+
+    @PostMapping("/me/photo")
+    public ResponseEntity<?> uploadPhoto(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        String photoUrl = fileStorageService.storeFile(file);
+        EntraineurDTO updated = service.updatePhoto(photoUrl);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 }

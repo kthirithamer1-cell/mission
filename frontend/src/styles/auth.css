@@ -42,16 +42,17 @@ body {
 }
 
 .auth-brand .logo {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  width: 64px;
+  height: 64px;
+  background: #ffffff;
   border-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 1.75rem;
   margin-bottom: 0.75rem;
-  box-shadow: var(--shadow);
+  box-shadow: none;
+  border: none;
 }
 
 .auth-brand h1 {

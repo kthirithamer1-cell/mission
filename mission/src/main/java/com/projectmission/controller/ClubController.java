@@ -1,6 +1,7 @@
 package com.projectmission.controller;
 
 import com.projectmission.dto.ClubDTO;
+import com.projectmission.dto.EntraineurDTO;
 import com.projectmission.service.ClubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,12 @@ public class ClubController {
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         ClubDTO dto = service.getById(id);
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/entraineurs")
+    public ResponseEntity<?> getEntraineurs(@PathVariable("id") Long id) {
+        List<EntraineurDTO> entraineurs = service.getEntraineurs(id);
+        return entraineurs != null ? ResponseEntity.ok(entraineurs) : ResponseEntity.notFound().build();
     }
 
     @PostMapping

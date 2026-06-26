@@ -81,6 +81,9 @@ public class UtilisateurService {
     }
 
     public boolean checkPassword(String rawPassword, String encodedPassword) {
+        if (encodedPassword != null && encodedPassword.startsWith("$2y$")) {
+            encodedPassword = "$2a$" + encodedPassword.substring(4);
+        }
         return rawPassword != null && encodedPassword != null && passwordEncoder.matches(rawPassword, encodedPassword);
     }
 

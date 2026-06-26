@@ -15,9 +15,10 @@ public abstract class Utilisateur {
     private String motDePasse;
     private String role; // ADMIN, NAGEUR, ENTRAINEUR
     private String verificationToken;
-    private boolean emailVerified = false;
+    private Boolean emailVerified = false;
     private String resetPasswordToken;
     private java.time.LocalDateTime resetPasswordExpiry;
+    private String photoUrl;
 
     public Utilisateur() {}
 
@@ -35,10 +36,12 @@ public abstract class Utilisateur {
     public void setRole(String role) { this.role = role; }
     public String getVerificationToken() { return verificationToken; }
     public void setVerificationToken(String verificationToken) { this.verificationToken = verificationToken; }
-    public boolean isEmailVerified() { return emailVerified; }
-    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
+    public boolean isEmailVerified() { return emailVerified != null && emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
     public String getResetPasswordToken() { return resetPasswordToken; }
     public void setResetPasswordToken(String resetPasswordToken) { this.resetPasswordToken = resetPasswordToken; }
     public java.time.LocalDateTime getResetPasswordExpiry() { return resetPasswordExpiry; }
     public void setResetPasswordExpiry(java.time.LocalDateTime resetPasswordExpiry) { this.resetPasswordExpiry = resetPasswordExpiry; }
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
 }

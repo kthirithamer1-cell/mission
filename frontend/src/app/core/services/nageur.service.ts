@@ -35,4 +35,10 @@ export class NageurService {
   updateMe(nageur: Partial<Nageur>): Observable<Nageur> {
     return this.http.put<Nageur>(`${environment.apiUrl}/nageurs/me`, nageur);
   }
+
+  uploadPhoto(file: File): Observable<Nageur> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<Nageur>(`${environment.apiUrl}/nageurs/me/photo`, formData);
+  }
 }

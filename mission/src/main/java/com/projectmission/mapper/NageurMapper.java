@@ -33,6 +33,7 @@ public class NageurMapper {
             dto.setClubNom(entity.getClub().getNom());
         }
         dto.setLicenceId(entity.getLicence() != null ? entity.getLicence().getId() : null);
+        dto.setPhotoUrl(entity.getPhotoUrl());
         return dto;
     }
 
@@ -48,6 +49,7 @@ public class NageurMapper {
         entity.setAge(dto.getAge());
         entity.setSexe(dto.getSexe());
         entity.setCategorie(dto.getCategorie());
+        entity.setPhotoUrl(dto.getPhotoUrl());
         if (dto.getClubId() != null) {
             Club club = clubRepository.findById(dto.getClubId()).orElse(null);
             entity.setClub(club);

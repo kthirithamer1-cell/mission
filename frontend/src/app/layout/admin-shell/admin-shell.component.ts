@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AdminUiService } from '../../core/services/admin-ui.service';
@@ -12,6 +12,8 @@ import { AuthService } from '../../core/services/auth.service';
 export class AdminShellComponent implements OnInit, OnDestroy {
   private readonly ui = inject(AdminUiService);
   private readonly auth = inject(AuthService);
+
+  readonly profileMenuOpen = signal(false);
 
   ngOnInit(): void {
     document.body.classList.add('dash-body');
@@ -53,7 +55,34 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     return '';
   }
 
+  readonly profileRoute = computed((): string | null => {
+    const r = this.currentUser()?.role;
+    if (r === 'ENTRAINEUR') return '/mon-profil';
+    if (r === 'NAGEUR') return '/nageur-profil';
+    return null;
+  });
+
+  toggleProfileMenu(event: Event): void {
+    event.stopPropagation();
+    this.profileMenuOpen.update((open) => !open);
+  }
+
+  closeProfileMenu(): void {
+    this.profileMenuOpen.set(false);
+  }
+
   logout(): void {
+    this.closeProfileMenu();
     this.auth.logout();
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.closeProfileMenu();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.closeProfileMenu();
   }
 }

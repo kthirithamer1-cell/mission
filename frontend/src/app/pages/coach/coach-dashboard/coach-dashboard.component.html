@@ -1,0 +1,218 @@
+<main class="coach-dashboard-container">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title coach-theme-text">Espace Entraîneur</h1>
+      <p class="page-sub">Suivi des entraînements, de la planification et de l'assiduité des nageurs.</p>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn btn-amber" (click)="refresh()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; margin-right: 4px;">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        Actualiser
+      </button>
+    </div>
+  </header>
+
+  <!-- Stats Strip -->
+  <section class="stats-strip" aria-label="Indicateurs de performance">
+    <div class="stat-tile tile-amber">
+      <div class="stat-tile-icon icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Séances cette semaine</p>
+      <p class="stat-tile-value">{{ stats()?.seancesThisWeek ?? 0 }}</p>
+      <p class="stat-tile-foot">Planifiées</p>
+    </div>
+
+    <div class="stat-tile tile-amber">
+      <div class="stat-tile-icon icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Nageurs sous tutelle</p>
+      <p class="stat-tile-value">{{ stats()?.nageursCount ?? 0 }}</p>
+      <p class="stat-tile-foot">Groupes affectés</p>
+    </div>
+
+    <div class="stat-tile tile-amber">
+      <div class="stat-tile-icon icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Présences marquées</p>
+      <p class="stat-tile-value">{{ stats()?.presencesCount ?? 0 }}</p>
+      <p class="stat-tile-foot">Total historique</p>
+    </div>
+
+    <div class="stat-tile tile-amber">
+      <div class="stat-tile-icon icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <p class="stat-tile-label">Prochaine séance</p>
+      <p class="stat-tile-value stat-tile-value--text">
+        {{ stats()?.nextSeance?.titre ?? 'Aucune' }}
+      </p>
+      <p class="stat-tile-foot">{{ stats()?.nextSeance?.date ?? '—' }}</p>
+    </div>
+  </section>
+
+  <!-- Main Grid Layout -->
+  <div class="dash-grid">
+    <div class="dash-main-col">
+      
+      <!-- Weekly Calendar -->
+      <section class="dash-card">
+        <div class="panel-head-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+          <div>
+            <p class="dash-card-label" style="margin: 0;">Planification</p>
+            <h2 class="dash-card-title" style="font-size: 1.2rem; margin: 0;">Calendrier des séances</h2>
+          </div>
+          <a routerLink="/mon-planning" class="btn btn-outline-amber btn-sm" style="text-decoration: none;">Voir tout</a>
+        </div>
+        <p class="dash-page-sub" style="margin-bottom: 1rem;">Vos entraînements, nageurs assignés et taux de présence.</p>
+        <app-seance-week-calendar
+          role="coach"
+          [compact]="true"
+          [showListToggle]="false"
+          [showStats]="false"
+          [showFullPageLink]="false" />
+      </section>
+
+      <!-- Supervised Swimmers -->
+      <section class="dash-card">
+        <p class="dash-card-label">Membres</p>
+        <h2 class="dash-card-title">Athlètes dans vos groupes ({{ stats()?.nageursCount ?? 0 }})</h2>
+        <p class="dash-page-sub" style="margin-bottom: 1rem;">Nageurs inscrits dans les catégories de vos groupes d'entraînement.</p>
+
+        <div class="table-wrap">
+          <table class="data-table" aria-label="Liste des nageurs du groupe">
+            <thead>
+              <tr>
+                <th scope="col">Photo</th>
+                <th scope="col">Nom & Prénom</th>
+                <th scope="col">Email</th>
+                <th scope="col">Catégorie</th>
+                <th scope="col">Sexe</th>
+                <th scope="col">Âge</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (swimmer of stats()?.groupSwimmers; track swimmer.id) {
+                <tr>
+                  <td>
+                    @if (swimmer.photoUrl) {
+                      <img [src]="swimmer.photoUrl" alt="" class="table-avatar-img" />
+                    } @else {
+                      <div class="table-avatar-fallback">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                    }
+                  </td>
+                  <td style="font-weight: 600; color: #1a2f36;">{{ swimmer.prenom }} {{ swimmer.nom }}</td>
+                  <td>{{ swimmer.email }}</td>
+                  <td><span class="badge badge-amber">{{ swimmer.categorie ?? '—' }}</span></td>
+                  <td>{{ swimmer.sexe ?? '—' }}</td>
+                  <td>{{ swimmer.age ?? '—' }} ans</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="empty-table-msg">Aucun nageur trouvé dans vos catégories.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Sidebar Column -->
+    <aside class="dash-sidebar-col">
+      <!-- Profile Card -->
+      <section class="dash-card profile-sidebar-card">
+        <app-photo-upload 
+          [photoUrl]="currentUser()?.photoUrl" 
+          accentColor="#d97706" 
+          [uploading]="uploadingPhoto"
+          (photoSelected)="onPhotoSelected($event)">
+        </app-photo-upload>
+        
+        <h3 class="profile-name" style="margin-top: 1rem; font-weight: 700; text-align: center;">
+          {{ currentUser()?.prenom }} {{ currentUser()?.nom }}
+        </h3>
+        <p class="profile-role" style="text-align: center; color: var(--muted); font-size: 0.85rem; font-weight: 500;">
+          Entraîneur Club
+        </p>
+        
+        <div class="profile-details-list" style="margin-top: 1.25rem;">
+          <div class="detail-row">
+            <span class="detail-label">Club</span>
+            <span class="detail-value" style="font-weight: 600;">{{ currentUser()?.clubNom ?? '—' }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ currentUser()?.email }}</span>
+          </div>
+        </div>
+        
+        <a routerLink="/profile" class="btn btn-outline-amber" style="width: 100%; margin-top: 1.25rem; text-decoration: none; display: block; text-align: center;">
+          Gérer mon profil
+        </a>
+      </section>
+
+      <!-- Attendance Chart -->
+      <section class="dash-card">
+        <p class="dash-card-label">Statistiques</p>
+        <h2 class="dash-card-title" style="font-size: 1.05rem;">Taux d'assiduité</h2>
+        <p class="dash-page-sub" style="margin-bottom: 1rem;">Présences enregistrées sur les 6 dernières séances.</p>
+        
+        <div style="height: 200px; position: relative;">
+          <canvas #barCanvas aria-label="Graphique du taux d'assiduité des nageurs"></canvas>
+        </div>
+      </section>
+
+      <!-- Quick Actions -->
+      <section class="dash-card">
+        <p class="dash-card-label">Raccourcis</p>
+        <h2 class="dash-card-title" style="font-size: 1.05rem; margin-bottom: 0.85rem;">Actions rapides</h2>
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <a routerLink="/seances" class="btn btn-amber-light" style="text-decoration: none; width: 100%; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Planifier une séance
+          </a>
+          <a routerLink="/presences" class="btn btn-amber-light" style="text-decoration: none; width: 100%; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Marquer des présences
+          </a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</main>

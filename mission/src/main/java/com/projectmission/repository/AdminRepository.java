@@ -3,4 +3,8 @@ package com.projectmission.repository;
 import com.projectmission.model.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AdminRepository extends JpaRepository<Admin, Long> {}
+import java.util.Optional;
+
+public interface AdminRepository extends JpaRepository<Admin, Long> {
+    Optional<Admin> findByEmail(String email);
+}

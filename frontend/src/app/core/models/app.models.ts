@@ -79,3 +79,73 @@ export interface DashboardStats {
   evolutionParCategorie: { [key: string]: number[] };
   records: RecordDTO[];
 }
+
+export interface ResultDetailDTO {
+  id: number;
+  temps: string;
+  classement: number;
+  epreuveStyle: string;
+  epreuveDistance: number;
+  competitionNom: string;
+}
+
+export interface SwimmerRecordDTO {
+  epreuveLabel: string;
+  temps: string;
+  date: string;
+}
+
+export interface CoachDashboardStats {
+  seancesThisWeek: number;
+  nageursCount: number;
+  presencesCount: number;
+  nextSeance?: Seance;
+  weekSessions: Seance[];
+  groupSwimmers: Nageur[];
+  attendanceRateBySession: { [key: string]: number };
+}
+
+export interface NageurDashboardStats {
+  resultatsCount: number;
+  presencesCount: number;
+  nextSeance?: Seance;
+  categorie: string;
+  recentResults: ResultDetailDTO[];
+  upcomingSessions: Seance[];
+  personalRecords: SwimmerRecordDTO[];
+  progressionData: { [key: string]: number[] };
+}
+
+export interface CalendarEvent {
+  id?: number;
+  titre: string;
+  date: string;
+  heureDebut: string;
+  heureFin: string;
+  description?: string;
+  clubId?: number;
+  clubNom?: string;
+  entraineurId?: number;
+  entraineurNom?: string;
+  reservationId?: number;
+  piscineNom?: string;
+  couloirsLabel?: string;
+  studentsTotal?: number;
+  presentCount?: number;
+  absentCount?: number;
+  justifieCount?: number;
+  attendanceRate?: number;
+  studentNames?: string[];
+  myPresenceStatus?: string;
+  relevantToMe?: boolean;
+  categorie?: string;
+}
+
+export interface CalendarResponse {
+  from: string;
+  to: string;
+  totalEvents: number;
+  upcomingCount: number;
+  totalHours: number;
+  events: CalendarEvent[];
+}

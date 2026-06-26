@@ -1,0 +1,214 @@
+/* Nageur Dashboard Theme Styles */
+
+.nageur-theme-text {
+  background: linear-gradient(105deg, #047857 0%, #10b981 55%, #34d399 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+.btn-emerald {
+  background: #10b981;
+  color: #fff;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-emerald:hover {
+  background: #047857;
+}
+
+.btn-outline-emerald {
+  background: transparent;
+  color: #10b981;
+  border: 2px solid #10b981;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-emerald:hover {
+  background: #10b981;
+  color: #fff;
+}
+
+.tile-emerald {
+  border-left: 4px solid #10b981 !important;
+}
+
+.icon-emerald {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+}
+
+/* Event select dropdown styling */
+.event-select-dropdown {
+  background-color: var(--card);
+  color: var(--text);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.event-select-dropdown:focus {
+  border-color: #10b981;
+}
+
+/* Empty fallbacks */
+.empty-chart-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  color: var(--muted);
+  text-align: center;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+.empty-chart-fallback p {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-gold {
+  background: rgba(251, 191, 36, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badge-silver {
+  background: rgba(156, 163, 175, 0.15);
+  color: #4b5563;
+  border: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.badge-bronze {
+  background: rgba(217, 119, 6, 0.15);
+  color: #78350f;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+.badge-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+}
+
+/* Supervised swimmers photo column styling */
+.table-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(16, 185, 129, 0.2);
+  display: block;
+}
+
+.table-avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  border: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar profile card styles */
+.profile-sidebar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1.25rem !important;
+}
+
+.profile-details-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 1rem 0;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.detail-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #1f2937;
+  text-align: right;
+}
+
+/* Records sidebar style */
+.records-sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.record-sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(16, 185, 129, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.record-sidebar-item:hover {
+  transform: translateX(3px);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.record-sidebar-main {
+  min-width: 0;
+}
+
+.record-sidebar-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+
+.record-sidebar-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.record-sidebar-time {
+  font-family: inherit;
+  font-weight: 750;
+  color: #10b981;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
