@@ -14,6 +14,9 @@ public class NageurController {
     @Autowired
     private NageurService service;
 
+    @Autowired
+    private com.projectmission.service.FileStorageService fileStorageService;
+
     @GetMapping
     public ResponseEntity<List<NageurDTO>> getAll() { return ResponseEntity.ok(service.getAllForCurrentUser()); }
 
@@ -47,6 +50,13 @@ public class NageurController {
     @PutMapping("/me")
     public ResponseEntity<?> updateMe(@RequestBody NageurDTO dto) {
         NageurDTO updated = service.updateMe(dto);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/me/photo")
+    public ResponseEntity<?> uploadPhoto(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        String photoUrl = fileStorageService.storeFile(file);
+        NageurDTO updated = service.updatePhoto(photoUrl);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 }

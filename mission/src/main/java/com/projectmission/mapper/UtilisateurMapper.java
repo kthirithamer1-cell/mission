@@ -27,6 +27,7 @@ public class UtilisateurMapper {
         dto.setRole(utilisateur.getRole());
         dto.setEmailVerified(utilisateur.isEmailVerified());
         dto.setVerificationToken(utilisateur.getVerificationToken());
+        dto.setPhotoUrl(utilisateur.getPhotoUrl());
         if (utilisateur instanceof Admin admin) {
             dto.setSuperAdmin(Boolean.TRUE.equals(admin.getSuperAdmin()));
             if (admin.getClub() != null) {
@@ -75,6 +76,7 @@ public class UtilisateurMapper {
             utilisateur.setEmailVerified(dto.getEmailVerified());
         }
         utilisateur.setVerificationToken(dto.getVerificationToken());
+        utilisateur.setPhotoUrl(dto.getPhotoUrl());
         if (dto.getRole() != null) {
             utilisateur.setRole(dto.getRole());
         }

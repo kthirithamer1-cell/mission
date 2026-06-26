@@ -12,6 +12,7 @@ public class UtilisateurDTO {
     private Boolean superAdmin;
     private Boolean emailVerified;
     private String verificationToken;
+    private String photoUrl;
 
     public UtilisateurDTO() {}
 
@@ -21,6 +22,15 @@ public class UtilisateurDTO {
         this.prenom = prenom;
         this.email = email;
         this.role = role;
+    }
+
+    public UtilisateurDTO(Long id, String nom, String prenom, String email, String role, String photoUrl) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.role = role;
+        this.photoUrl = photoUrl;
     }
 
     public Long getId() { return id; }
@@ -45,4 +55,6 @@ public class UtilisateurDTO {
     public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
     public String getVerificationToken() { return verificationToken; }
     public void setVerificationToken(String verificationToken) { this.verificationToken = verificationToken; }
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
 }

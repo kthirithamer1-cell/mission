@@ -35,4 +35,10 @@ export class EntraineurService {
   updateMe(entraineur: Partial<Entraineur>): Observable<Entraineur> {
     return this.http.put<Entraineur>(`${environment.apiUrl}/entraineurs/me`, entraineur);
   }
+
+  uploadPhoto(file: File): Observable<Entraineur> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<Entraineur>(`${environment.apiUrl}/entraineurs/me/photo`, formData);
+  }
 }

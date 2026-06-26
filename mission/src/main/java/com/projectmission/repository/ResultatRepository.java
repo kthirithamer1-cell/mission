@@ -8,4 +8,5 @@ public interface ResultatRepository extends JpaRepository<Resultat, Long> {
     List<Resultat> findByNageurId(Long nageurId);
     List<Resultat> findByEpreuveCompetitionId(Long competitionId);
     List<Resultat> findByRecordTrue();
+    List<Resultat> findByNageur_Id(Long nageurId);
 }

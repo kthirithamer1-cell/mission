@@ -85,6 +85,17 @@ export class AuthService {
     this.isAuthenticated.set(true);
   }
 
+  updateUserSession(user: Utilisateur): void {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    this.currentUser.set(user);
+  }
+
+  dashboardRouteForRole(role?: string | null): string {
+    if (role === 'ENTRAINEUR') return '/coach-dashboard';
+    if (role === 'NAGEUR') return '/nageur-dashboard';
+    return '/dashboard';
+  }
+
   private loadUser(): Utilisateur | null {
     const raw = localStorage.getItem(USER_KEY);
     if (!raw) return null;

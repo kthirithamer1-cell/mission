@@ -1,0 +1,197 @@
+<div class="cal-widget" [ngClass]="[themeClass(), compact() ? 'cal-widget--compact' : '']">
+
+  @if (showStats() && !loading() && !error() && calendar(); as data) {
+    <div class="cp-plan-stats cal-widget-stats">
+      <div class="cp-plan-stat">
+        <span class="cp-plan-stat-val">{{ data.totalEvents }}</span>
+        <span class="cp-plan-stat-lbl">Séances</span>
+      </div>
+      <div class="cp-plan-stat">
+        <span class="cp-plan-stat-val">{{ data.upcomingCount }}</span>
+        <span class="cp-plan-stat-lbl">À venir</span>
+      </div>
+      <div class="cp-plan-stat">
+        <span class="cp-plan-stat-val">{{ data.totalHours }}h</span>
+        <span class="cp-plan-stat-lbl">Volume</span>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="cp-plan-loader">
+      <div class="cp-plan-spinner"></div>
+      <span>Chargement du calendrier…</span>
+    </div>
+  } @else if (error()) {
+    <div class="cp-plan-error">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      {{ error() }}
+    </div>
+  } @else {
+    <div class="cp-plan-toolbar">
+      <div class="cp-plan-view-toggle">
+        <button type="button" class="cp-plan-toggle-btn" [class.is-active]="viewMode() === 'week'" (click)="setView('week')">
+          Semaine
+        </button>
+        @if (showListToggle()) {
+          <button type="button" class="cp-plan-toggle-btn" [class.is-active]="viewMode() === 'list'" (click)="setView('list')">
+            Liste
+          </button>
+        }
+      </div>
+
+      <div class="cp-plan-week-nav">
+        <button type="button" class="cp-plan-nav-btn" (click)="prevWeek()" title="Semaine précédente" aria-label="Semaine précédente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="cp-plan-week-label" (click)="resetWeek()">{{ weekLabel() }}</button>
+        <button type="button" class="cp-plan-nav-btn" (click)="nextWeek()" title="Semaine suivante" aria-label="Semaine suivante">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+
+      @if (showFullPageLink()) {
+        <a [routerLink]="fullPageLink()" class="cal-full-link">Voir tout →</a>
+      }
+    </div>
+
+    @if (viewMode() === 'week') {
+      <div class="cp-cal-wrap">
+        <div class="cp-cal-header">
+          <div class="cp-cal-time-gutter"></div>
+          @for (date of weekDates(); track date.toISOString()) {
+            <div class="cp-cal-day-head" [class.is-today]="isToday(date)">
+              <span class="cp-cal-day-name">{{ DAYS[$index] }}</span>
+              <span class="cp-cal-day-num" [class.is-today]="isToday(date)">{{ date.getDate() }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="cp-cal-grid-wrap">
+          <div class="cp-cal-time-col">
+            @for (h of HOURS; track h) {
+              <div class="cp-cal-hour-label">{{ h }}h</div>
+            }
+          </div>
+
+          <div class="cp-cal-days">
+            @for (date of weekDates(); track date.toISOString()) {
+              <div class="cp-cal-day-col" [class.is-today]="isToday(date)">
+                @for (h of HOURS; track h) {
+                  <div class="cp-cal-cell"></div>
+                }
+                @for (s of getSeancesForDate(date); track s.id) {
+                  <div class="cp-cal-event"
+                       [class.cal-event-muted]="role() === 'nageur' && !s.relevantToMe"
+                       [style.top.%]="seanceTop(s)"
+                       [style.height.%]="seanceHeight(s)"
+                       [title]="s.titre + ' · ' + formatTime(s.heureDebut) + ' – ' + formatTime(s.heureFin)">
+                    <span class="cp-cal-event-time">{{ formatTime(s.heureDebut) }}</span>
+                    <span class="cp-cal-event-title">{{ s.titre }}</span>
+                    @if (role() === 'coach' && s.studentsTotal != null) {
+                      <span class="cp-cal-event-meta">{{ s.presentCount ?? 0 }}/{{ s.studentsTotal }} nageurs</span>
+                    }
+                    @if (role() === 'nageur' && s.entraineurNom) {
+                      <span class="cp-cal-event-meta">{{ s.entraineurNom }}</span>
+                    }
+                    @if (role() === 'nageur' && s.myPresenceStatus) {
+                      <span class="cp-cal-event-badge" [class]="presenceClass(s.myPresenceStatus)">
+                        {{ presenceLabel(s.myPresenceStatus) }}
+                      </span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (events().length === 0) {
+          <div class="cp-plan-empty">
+            <div class="cp-plan-empty-icon">📅</div>
+            <p class="cp-plan-empty-title">Aucune séance cette semaine</p>
+            <p class="cp-plan-empty-sub">Naviguez vers une autre semaine ou consultez la vue liste.</p>
+          </div>
+        }
+      </div>
+    }
+
+    @if (viewMode() === 'list') {
+      <div class="cp-plan-list">
+        @if (upcomingOnly().length === 0 && pastOnly().length === 0) {
+          <div class="cp-plan-empty">
+            <div class="cp-plan-empty-icon">📅</div>
+            <p class="cp-plan-empty-title">Aucune séance sur cette période</p>
+          </div>
+        }
+
+        @if (upcomingOnly().length > 0) {
+          <p class="cp-plan-section-label">À venir</p>
+          @for (s of upcomingOnly(); track s.id) {
+            <div class="cp-plan-card" [class.is-muted]="role() === 'nageur' && !s.relevantToMe">
+              <div class="cp-plan-card-bar"></div>
+              <div class="cp-plan-card-body">
+                <div class="cp-plan-card-head">
+                  <span class="cp-plan-card-title">{{ s.titre }}</span>
+                  <span class="cp-plan-card-time">{{ formatTime(s.heureDebut) }} – {{ formatTime(s.heureFin) }}</span>
+                </div>
+                <div class="cp-plan-card-meta">
+                  <span class="cp-plan-card-date">{{ s.date }}</span>
+                  @if (s.piscineNom) {
+                    <span class="cp-plan-card-club">{{ s.piscineNom }}</span>
+                  }
+                  @if (s.couloirsLabel) {
+                    <span class="cp-plan-card-club">{{ s.couloirsLabel }}</span>
+                  }
+                  @if (role() === 'coach' && s.studentsTotal != null) {
+                    <span class="cp-plan-card-club">{{ s.presentCount ?? 0 }}/{{ s.studentsTotal }} présents</span>
+                  }
+                  @if (role() === 'nageur' && s.entraineurNom) {
+                    <span class="cp-plan-card-club">{{ s.entraineurNom }}</span>
+                  }
+                  @if (role() === 'nageur') {
+                    <span class="cp-cal-event-badge" [class]="presenceClass(s.myPresenceStatus)">
+                      {{ presenceLabel(s.myPresenceStatus) }}
+                    </span>
+                  }
+                </div>
+                @if (s.description) {
+                  <p class="cp-plan-card-desc">{{ s.description }}</p>
+                }
+                @if (role() === 'coach' && s.studentNames?.length) {
+                  <p class="cp-plan-card-desc">Nageurs : {{ s.studentNames!.join(', ') }}</p>
+                }
+                @if (role() === 'coach' && s.id) {
+                  <a [routerLink]="['/presences']" [queryParams]="{ seanceId: s.id }" class="cal-list-action">
+                    Faire l'appel
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        @if (pastOnly().length > 0) {
+          <p class="cp-plan-section-label is-past">Passées</p>
+          @for (s of pastOnly(); track s.id) {
+            <div class="cp-plan-card is-past">
+              <div class="cp-plan-card-bar"></div>
+              <div class="cp-plan-card-body">
+                <div class="cp-plan-card-head">
+                  <span class="cp-plan-card-title">{{ s.titre }}</span>
+                  <span class="cp-plan-card-time">{{ formatTime(s.heureDebut) }} – {{ formatTime(s.heureFin) }}</span>
+                </div>
+                <div class="cp-plan-card-meta">
+                  <span class="cp-plan-card-date">{{ s.date }}</span>
+                  @if (role() === 'coach' && s.attendanceRate != null) {
+                    <span class="cp-plan-card-club">{{ s.attendanceRate }}% présence</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+  }
+</div>
