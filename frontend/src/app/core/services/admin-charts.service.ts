@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Chart } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 import { DashboardStats } from '../models/app.models';
 
 const COLORS = [
@@ -41,8 +43,7 @@ export class AdminChartsService {
       },
       options: {
         plugins: { legend: { display: false } },
-        responsive: true,
-        maintainAspectRatio: true,
+        responsive: false,
       },
     });
 
@@ -64,8 +65,7 @@ export class AdminChartsService {
       type: 'line',
       data: { labels: LINE_LABELS, datasets },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: false,
         plugins: { legend: { labels: { color: c.text } } },
         scales: {
           x: { ticks: { color: c.text }, grid: { color: c.grid } },

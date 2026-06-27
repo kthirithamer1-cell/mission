@@ -12,6 +12,7 @@ public class ReservationDTO {
     private Integer couloirDebut;
     private Integer couloirFin;
     private String statut;
+    private String motifRejet;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -35,4 +36,6 @@ public class ReservationDTO {
     public void setCouloirFin(Integer couloirFin) { this.couloirFin = couloirFin; }
     public String getStatut() { return statut; }
     public void setStatut(String statut) { this.statut = statut; }
+    public String getMotifRejet() { return motifRejet; }
+    public void setMotifRejet(String motifRejet) { this.motifRejet = motifRejet; }
 }

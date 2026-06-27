@@ -214,6 +214,22 @@ export interface Competition {
   saison?: string;
 }
 
+export interface ParticipationDTO {
+  id?: number;
+  nageurId?: number;
+  nageurNom?: string;
+  nageurPrenom?: string;
+  nageurEmail?: string;
+  competitionId?: number;
+  competitionNom?: string;
+  clubId?: number;
+  clubNom?: string;
+  dateInscription?: string;
+  statut?: string;
+  dateCreation?: string;
+  dateModification?: string;
+}
+
 export interface CompetitionInternationale {
   id?: number;
   nom: string;

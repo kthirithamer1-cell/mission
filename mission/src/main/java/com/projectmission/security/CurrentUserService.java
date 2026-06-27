@@ -44,4 +44,9 @@ public class CurrentUserService {
         UtilisateurDTO user = getCurrentUser();
         return user != null ? user.getRole() : null;
     }
+
+    public Long getId() {
+        UtilisateurDTO user = getCurrentUser();
+        return user != null ? user.getId() : null;
+    }
 }

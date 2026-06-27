@@ -24,8 +24,9 @@ public class Reservation {
     private LocalTime heureFin;
     private Integer couloirDebut;
     private Integer couloirFin;
-    /** EN_ATTENTE, CONFIRME, ANNULE */
+    /** EN_ATTENTE, CONFIRME, ANNULE, REJETE */
     private String statut = "EN_ATTENTE";
+    private String motifRejet;
 
     @OneToOne(mappedBy = "reservation")
     private Seance seance;
@@ -48,6 +49,8 @@ public class Reservation {
     public void setCouloirFin(Integer couloirFin) { this.couloirFin = couloirFin; }
     public String getStatut() { return statut; }
     public void setStatut(String statut) { this.statut = statut; }
+    public String getMotifRejet() { return motifRejet; }
+    public void setMotifRejet(String motifRejet) { this.motifRejet = motifRejet; }
     public Seance getSeance() { return seance; }
     public void setSeance(Seance seance) { this.seance = seance; }
 }

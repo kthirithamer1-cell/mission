@@ -40,20 +40,32 @@ public class ReservationService {
     }
 
     public ReservationDTO create(ReservationDTO dto) {
-        if (!currentUserService.isSuperAdmin()) {
+        String role = currentUserService.getRole();
+        boolean isAdmin = "ADMIN".equals(role);
+        boolean isSuperAdmin = currentUserService.isSuperAdmin();
+        if (!isSuperAdmin && !isAdmin) {
             Long clubId = currentUserService.getClubId();
             if (clubId != null) dto.setClubId(clubId);
             dto.setStatut("EN_ATTENTE");
         }
-        validateReservation(dto, null);
+        String reason = validateReservation(dto, null);
+        if ((isSuperAdmin || isAdmin) && reason != null) {
+            dto.setStatut("REJETE");
+            dto.setMotifRejet(reason);
+        } else if ((isSuperAdmin || isAdmin) && reason == null) {
+            dto.setStatut("CONFIRME");
+        }
         Reservation saved = repository.save(mapper.toEntity(dto));
         return mapper.toDTO(saved);
     }
 
     public ReservationDTO updateStatus(Long id, String statut) {
         return repository.findById(id).map(existing -> {
-            if (!currentUserService.isSuperAdmin() && !"ANNULE".equals(statut)) {
-                throw new IllegalStateException("Seul l'administrateur plateforme peut confirmer une r├⌐servation");
+            String role = currentUserService.getRole();
+            boolean isAdmin = "ADMIN".equals(role);
+            boolean isSuperAdmin = currentUserService.isSuperAdmin();
+            if (!isSuperAdmin && !isAdmin && !"ANNULE".equals(statut)) {
+                throw new IllegalStateException("Seul l'administrateur peut modifier le statut de cette réservation");
             }
             existing.setStatut(statut);
             return mapper.toDTO(repository.save(existing));
@@ -62,7 +74,7 @@ public class ReservationService {
 
     public ReservationDTO update(Long id, ReservationDTO dto) {
         return repository.findById(id).map(existing -> {
-            validateReservation(dto, id);
+            String reason = validateReservation(dto, id);
             Reservation mapped = mapper.toEntity(dto);
             existing.setPiscine(mapped.getPiscine());
             existing.setClub(mapped.getClub());
@@ -71,8 +83,15 @@ public class ReservationService {
             existing.setHeureFin(mapped.getHeureFin());
             existing.setCouloirDebut(mapped.getCouloirDebut());
             existing.setCouloirFin(mapped.getCouloirFin());
-            if (currentUserService.isSuperAdmin() && dto.getStatut() != null) {
-                existing.setStatut(dto.getStatut());
+            boolean isAdmin = "ADMIN".equals(currentUserService.getRole());
+            boolean isSuperAdmin = currentUserService.isSuperAdmin();
+            if ((isSuperAdmin || isAdmin)) {
+                if (reason != null) {
+                    existing.setStatut("REJETE");
+                    existing.setMotifRejet(reason);
+                } else if (dto.getStatut() != null) {
+                    existing.setStatut(dto.getStatut());
+                }
             }
             return mapper.toDTO(repository.save(existing));
         }).orElse(null);
@@ -82,7 +101,7 @@ public class ReservationService {
         repository.deleteById(id);
     }
 
-    private void validateReservation(ReservationDTO dto, Long excludeId) {
+    private String validateReservation(ReservationDTO dto, Long excludeId) {
         Piscine piscine = piscineRepository.findById(dto.getPiscineId()).orElse(null);
         if (piscine == null) throw new IllegalArgumentException("Piscine introuvable");
         if (dto.getCouloirFin() < dto.getCouloirDebut()) {
@@ -101,9 +120,10 @@ public class ReservationService {
             if (excludeId != null && excludeId.equals(other.getId())) continue;
             if (!timesOverlap(start, end, other.getHeureDebut(), other.getHeureFin())) continue;
             if (lanesOverlap(dto.getCouloirDebut(), dto.getCouloirFin(), other.getCouloirDebut(), other.getCouloirFin())) {
-                throw new IllegalStateException("Conflit de couloirs avec une autre r├⌐servation");
+                return "Conflit de couloirs avec une autre réservation";
             }
         }
+        return null;
     }
 
     private boolean timesOverlap(LocalTime s1, LocalTime e1, LocalTime s2, LocalTime e2) {

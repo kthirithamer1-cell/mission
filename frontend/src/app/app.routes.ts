@@ -134,6 +134,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'club-management',
+        loadComponent: () =>
+          import('./pages/admin/clubs/clubs.component').then(
+            (m) => m.ClubsComponent
+          ),
+      },
+      {
         path: 'mon-profil',
         loadComponent: () =>
           import('./pages/coach/coach-profile/coach-profile.component').then(
@@ -159,6 +166,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/nageur/nageur-clubs/nageur-clubs.component').then(
             (m) => m.NageurClubsComponent
+          ),
+      },
+      {
+        path: 'nageur-competitions',
+        loadComponent: () =>
+          import('./pages/nageur/nageur-competitions/nageur-competitions.component').then(
+            (m) => m.NageurCompetitionsComponent
           ),
       },
       {

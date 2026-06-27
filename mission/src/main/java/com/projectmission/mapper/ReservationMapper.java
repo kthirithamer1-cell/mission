@@ -37,6 +37,7 @@ public class ReservationMapper {
         dto.setCouloirDebut(entity.getCouloirDebut());
         dto.setCouloirFin(entity.getCouloirFin());
         dto.setStatut(entity.getStatut());
+        dto.setMotifRejet(entity.getMotifRejet());
         return dto;
     }
 
@@ -58,6 +59,7 @@ public class ReservationMapper {
         entity.setCouloirDebut(dto.getCouloirDebut());
         entity.setCouloirFin(dto.getCouloirFin());
         entity.setStatut(dto.getStatut() != null ? dto.getStatut() : "EN_ATTENTE");
+        entity.setMotifRejet(dto.getMotifRejet());
         return entity;
     }
 }

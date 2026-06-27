@@ -27,6 +27,12 @@
         <p class="stat-tile-value">{{ stats()?.creneauxAVenir ?? 0 }}</p>
         <p class="stat-tile-foot neutral">À venir (7 j)</p>
       </a>
+      <a class="stat-tile is-clickable" routerLink="/club-management" style="text-decoration: none; color: inherit">
+        <div class="stat-tile-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" /></svg></div>
+        <p class="stat-tile-label">Clubs</p>
+        <p class="stat-tile-value">{{ stats()?.clubsCount ?? 0 }}</p>
+        <p class="stat-tile-foot">Sur la plateforme</p>
+      </a>
     </section>
 
     <section class="dash-card charts-overview-card" aria-labelledby="charts-title">
@@ -41,13 +47,13 @@
       <div class="charts-split">
         <div class="chart-panel chart-panel--pie">
           <p class="dash-card-label" style="margin: 0;">Répartition</p>
-          <canvas #pieCanvas role="img" aria-label="Répartition des nageurs par catégorie"></canvas>
+          <canvas #pieCanvas tabindex="-1" role="img" aria-label="Répartition des nageurs par catégorie"></canvas>
           <div #pieLegend class="pie-legend"></div>
         </div>
         <div class="chart-panel chart-panel--line">
           <h3>Évolution des nageurs actifs</h3>
           <div class="chart-line-wrap">
-            <canvas #lineCanvas role="img" aria-label="Évolution mensuelle des nageurs actifs par catégorie"></canvas>
+            <canvas #lineCanvas tabindex="-1" role="img" aria-label="Évolution mensuelle des nageurs actifs par catégorie"></canvas>
           </div>
         </div>
       </div>
@@ -57,22 +63,38 @@
       <div class="dash-main-col">
         <section class="dash-card" aria-labelledby="rental-title">
           <p class="dash-card-label">Piscine partagée</p>
-          <h1 id="rental-title" class="dash-card-title">Couloirs disponibles pour le club</h1>
-          <p class="dash-page-sub" style="margin-bottom: 1rem;">Créneaux attribués sur les bassins municipaux (plusieurs clubs sur le même site).</p>
+          <h1 id="rental-title" class="dash-card-title">Disponibilité des piscines</h1>
+          <p class="dash-page-sub" style="margin-bottom: 1rem;">Couloirs réservés cette semaine — bassins municipaux mutualisés.</p>
 
-          <div class="rental-list" aria-label="Bassins et couloirs">
-            @for (res of reservations(); track res.id) {
-              <div class="rental-row">
-                <div class="rental-row-main">
-                  <p class="rental-row-title">{{ res.piscineNom }} — Couloirs {{ res.couloirDebut }} à {{ res.couloirFin }}</p>
-                  <p class="rental-row-meta">{{ res.date }} · {{ res.heureDebut }}–{{ res.heureFin }} · {{ res.clubNom }}</p>
+          <div class="calendar-week" role="grid" aria-label="Calendrier hebdomadaire des réservations">
+            <div class="calendar-header-row">
+              <div class="calendar-corner-cell">Piscine</div>
+              @for (day of calendarWeek(); track day.date) {
+                <div class="calendar-day-header" [class.is-today]="day.isToday">
+                  <span class="calendar-day-label">{{ day.label }}</span>
                 </div>
-                <span class="rental-badge" [class.rental-badge--active]="res.statut === 'CONFIRME'" [class.rental-badge--pending]="res.statut === 'EN_ATTENTE'">
-                  {{ res.statut === 'CONFIRME' ? 'Confirmé' : (res.statut === 'EN_ATTENTE' ? 'En attente' : 'Annulé') }}
-                </span>
+              }
+            </div>
+            @for (piscineNom of piscinesFromReservations(); track piscineNom) {
+              <div class="calendar-row">
+                <div class="calendar-piscine-cell">{{ piscineNom }}</div>
+                @for (day of calendarWeek(); track day.date) {
+                  <div class="calendar-day-cell">
+                    @for (res of day.reservations.filter(r => r.piscineNom === piscineNom); track res.id) {
+                      <div class="cal-event" [class.cal-confirme]="res.statut === 'CONFIRME'" [class.cal-attente]="res.statut === 'EN_ATTENTE'" [class.cal-annule]="res.statut === 'ANNULE'">
+                        <span class="cal-event-time">{{ res.heureDebut }}–{{ res.heureFin }}</span>
+                        <span class="cal-event-lanes">C{{ res.couloirDebut }}-{{ res.couloirFin }}</span>
+                        <span class="cal-event-club">{{ res.clubNom }}</span>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            } @empty {
-              <p class="requests-empty">Aucune réservation de couloir enregistrée</p>
+            }
+            @if (piscinesFromReservations().length === 0) {
+              <div class="calendar-empty">
+                Aucune réservation enregistrée pour cette semaine.
+              </div>
             }
           </div>
           <p class="pool-owner-note">L'exploitant de la piscine valide chaque demande. Votre club ne possède pas le bassin — vous réservez des couloirs disponibles.</p>

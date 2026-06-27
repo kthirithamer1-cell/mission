@@ -1,0 +1,130 @@
+<main class="dash-page-main">
+  <section class="dash-card" style="margin-bottom: 1.5rem;">
+    <p class="dash-card-label">Compétitions</p>
+    <h1 class="dash-card-title">Inscriptions aux compétitions</h1>
+    <p class="dash-page-sub">Consultez les compétitions ouvertes et inscrivez-vous en ligne.</p>
+  </section>
+
+  <!-- Filters -->
+  <section class="dash-card" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem;">
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+      <div>
+        <label style="font-size: 0.8rem; color: var(--dash-muted); display: block; margin-bottom: 4px;">Statut</label>
+        <select [ngModel]="filterStatut()" (ngModelChange)="filterStatut.set($event)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--dash-border); background: var(--dash-surface); color: var(--dash-text); font-size: 0.9rem;">
+          <option value="TOUS">Tous</option>
+          <option value="A_VENIR">À venir</option>
+          <option value="EN_COURS">En cours 🔴</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; color: var(--dash-muted); display: block; margin-bottom: 4px;">Type</label>
+        <select [ngModel]="filterType()" (ngModelChange)="filterType.set($event)"
+          style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--dash-border); background: var(--dash-surface); color: var(--dash-text); font-size: 0.9rem;">
+          <option value="TOUS">Tous les types</option>
+          <option value="CHAMPIONNAT">Championnat</option>
+          <option value="COUPE">Coupe</option>
+          <option value="MEETING">Meeting</option>
+          <option value="CRITÉRIUM">Critérium</option>
+        </select>
+      </div>
+      <button type="button" class="dash-btn" (click)="loadOpenCompetitions()">Actualiser</button>
+    </div>
+  </section>
+
+  <!-- Competition list -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.25rem;">
+    @for (comp of getFilteredCompetitions(); track comp.id) {
+      <div class="dash-card" style="display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+        <div style="position: absolute; top: 15px; right: 15px;">
+          <span class="badge" style="font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px;"
+            [class.badge-active]="comp.statut === 'EN_COURS'"
+            [class.badge-pending]="comp.statut === 'A_VENIR'"
+            [class.badge-inactive]="comp.statut === 'TERMINE'">
+            {{ comp.statut === 'EN_COURS' ? 'En cours 🔴' : (comp.statut === 'A_VENIR' ? 'À venir' : 'Terminée') }}
+          </span>
+        </div>
+
+        <div>
+          <span style="font-size: 0.7rem; font-weight: bold; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">
+            {{ comp.type }} ({{ comp.niveau }})
+          </span>
+          <h2 style="font-size: 1.2rem; font-weight: 700; margin: 0 0 10px; color: var(--dash-text); padding-right: 80px;">{{ comp.nom }}</h2>
+          <div style="font-size: 0.85rem; color: var(--dash-muted); display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px;">
+            <div>📍 {{ comp.lieu }}</div>
+            <div>🗓️ Du {{ comp.dateDebut | date:'shortDate' }} au {{ comp.dateFin | date:'shortDate' }}</div>
+            <div>🏆 {{ comp.organisateur }}</div>
+            @if (comp.saison) {
+              <div>🏊 Saison : {{ comp.saison }}</div>
+            }
+          </div>
+          @if (comp.description) {
+            <p style="font-size: 0.85rem; color: var(--dash-muted); line-height: 1.4; border-top: 1px dashed var(--dash-border); padding-top: 8px; margin: 0 0 12px;">
+              {{ comp.description }}
+            </p>
+          }
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--dash-border); padding-top: 12px; margin-top: 10px; flex-wrap: wrap; gap: 8px;">
+          <span style="font-size: 0.8rem; color: var(--dash-muted);">
+            👥 {{ registrationCounts()[comp.id!] ?? 0 }} inscrits
+          </span>
+          @if (isRegistered(comp.id!)) {
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge" [class]="getStatusBadge(getRegistrationFor(comp.id!)?.statut || 'INSCRIT')">
+                {{ getStatusText(getRegistrationFor(comp.id!)?.statut || 'INSCRIT') }}
+              </span>
+              <button type="button" class="dash-btn dash-btn--sm"
+                style="border-color: #f87171; color: #f87171;"
+                (click)="cancel(comp.id!)">
+                Annuler
+              </button>
+            </div>
+          } @else {
+            <button type="button" class="dash-btn dash-btn-primary dash-btn--sm"
+              [disabled]="comp.statut === 'TERMINE'"
+              (click)="register(comp.id!)">
+              S'inscrire
+            </button>
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="dash-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--dash-muted);">
+        Aucune compétition disponible pour le moment.
+      </div>
+    }
+  </div>
+
+  <!-- My Registrations Section -->
+  @if (myRegistrations().length > 0) {
+    <section class="dash-card" style="margin-top: 2rem;">
+      <p class="dash-card-label">Mes inscriptions</p>
+      <h2 class="dash-card-title" style="font-size: 1.1rem; margin-bottom: 1rem;">Vos inscriptions en cours</h2>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        @for (reg of myRegistrations(); track reg.id) {
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--dash-border); border-radius: 8px; background: var(--dash-bg);">
+            <div>
+              <strong style="color: var(--dash-text);">{{ reg.competitionNom }}</strong>
+              <span style="font-size: 0.8rem; color: var(--dash-muted); margin-left: 0.75rem;">
+                Inscrit le {{ reg.dateInscription | date:'shortDate' }}
+              </span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="badge" [class]="getStatusBadge(reg.statut || 'INSCRIT')">
+                {{ getStatusText(reg.statut || 'INSCRIT') }}
+              </span>
+              @if (reg.statut !== 'ANNULE') {
+                <button type="button" class="dash-btn dash-btn--sm"
+                  style="border-color: #f87171; color: #f87171;"
+                  (click)="cancel(reg.competitionId!)">
+                  Annuler
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</main>

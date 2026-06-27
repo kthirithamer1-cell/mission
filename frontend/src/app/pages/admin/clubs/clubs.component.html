@@ -1,0 +1,151 @@
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(26, 47, 54, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-container {
+    background: var(--dash-surface);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--dash-border-strong);
+  }
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .modal-title {
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--dash-text);
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--dash-border);
+    padding-bottom: 0.5rem;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .form-group-full {
+    grid-column: span 2;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    color: var(--dash-muted);
+  }
+  .form-group input {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--dash-border);
+    border-radius: var(--radius-sm);
+    background: #fcfdfd;
+    color: var(--dash-text);
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+</style>
+
+<main class="dash-page-main">
+  <div class="dash-page-head">
+    <div>
+      <p class="dash-card-label">Gestion</p>
+      <h1 class="dash-card-title">Clubs</h1>
+      <p class="dash-page-sub">Créer et gérer les clubs de la plateforme</p>
+    </div>
+    <button type="button" class="dash-btn" (click)="refresh()">Actualiser</button>
+  </div>
+
+  <section class="dash-card dash-table-card" aria-labelledby="clubs-heading">
+    <div class="panel-head-row">
+      <div>
+        <p class="dash-card-label">Annuaire</p>
+        <h2 id="clubs-heading" class="dash-card-title">Liste des clubs ({{ clubs().length }})</h2>
+      </div>
+      <button type="button" class="dash-btn dash-btn-primary" (click)="openAddModal()">Ajouter un club</button>
+    </div>
+    <div class="table-wrap">
+      <table class="dash-data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Adresse</th>
+            <th>Date affiliation</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (club of clubs(); track club.id) {
+            <tr>
+              <td style="font-weight: 600;">{{ club.nom }}</td>
+              <td>{{ club.adresse || '—' }}</td>
+              <td>{{ club.dateAffiliation || '—' }}</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button type="button" class="dash-btn dash-btn--sm" (click)="openEditModal(club)">Modifier</button>
+                  <button type="button" class="dash-btn dash-btn--sm" style="border-color: #f87171; color: #f87171;" (click)="deleteClub(club.id!)">Supprimer</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 2rem; color: var(--dash-muted);">
+                Aucun club trouvé.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- Modal Add/Edit -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">{{ isEditMode() ? 'Modifier le club' : 'Ajouter un club' }}</h3>
+      
+      <form (submit)="saveClub(); $event.preventDefault();" class="form-grid">
+        <div class="form-group form-group-full">
+          <label for="nom">Nom du club *</label>
+          <input type="text" id="nom" name="nom" [(ngModel)]="formClub().nom" required />
+        </div>
+        <div class="form-group form-group-full">
+          <label for="adresse">Adresse</label>
+          <input type="text" id="adresse" name="adresse" [(ngModel)]="formClub().adresse" />
+        </div>
+        <div class="form-group form-group-full">
+          <label for="dateAffiliation">Date d'affiliation</label>
+          <input type="date" id="dateAffiliation" name="dateAffiliation" [(ngModel)]="formClub().dateAffiliation" />
+        </div>
+
+        <div class="form-group-full form-actions">
+          <button type="button" class="dash-btn" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="dash-btn dash-btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

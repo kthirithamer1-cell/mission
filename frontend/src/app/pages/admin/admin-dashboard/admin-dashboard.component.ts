@@ -44,12 +44,38 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   readonly upcomingSeance = computed(() => {
     const list = this.seances();
     if (list.length === 0) return null;
-    // Get next upcoming seance
     const sorted = [...list].sort((a, b) => new Date(a.date + 'T' + a.heureDebut).getTime() - new Date(b.date + 'T' + b.heureDebut).getTime());
     return sorted[0];
   });
 
+  readonly calendarWeek = computed(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      days.push({
+        date: dateStr,
+        label: d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' }),
+        isToday: dateStr === today.toISOString().split('T')[0],
+        reservations: this.reservations().filter(r => r.date === dateStr),
+      });
+    }
+    return days;
+  });
+
+  readonly piscinesFromReservations = computed(() => {
+    const names = new Set<string>();
+    this.reservations().forEach(r => { if (r.piscineNom) names.add(r.piscineNom); });
+    return Array.from(names);
+  });
+
   ngOnInit(): void {
+    window.scrollTo({ top: 0, behavior: 'instant' });
     this.loadData();
   }
 
