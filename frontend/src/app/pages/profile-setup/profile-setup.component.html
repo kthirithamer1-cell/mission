@@ -1,0 +1,126 @@
+<div class="auth-gate">
+  <div class="auth-gate-shell auth-gate-shell--wide">
+    <app-auth-brand subtitle="Finalisation du compte" />
+
+    <section class="dash-card auth-gate-card">
+      <p class="dash-card-label">Profil</p>
+      <h1 class="dash-card-title auth-gate-title">Complétez votre profil</h1>
+
+      @if (alertMessage()) {
+        <div
+          class="auth-alert"
+          [class.auth-alert--error]="alertType() === 'error'"
+          [class.auth-alert--success]="alertType() === 'success'"
+          role="alert"
+        >
+          {{ alertMessage() }}
+        </div>
+      }
+
+      @if (loading()) {
+        <p class="auth-gate-footer">Chargement…</p>
+      } @else {
+        <form class="ui-form" (ngSubmit)="save()" novalidate>
+          <div class="auth-form-row">
+            <label class="ui-field">
+              <span>Prénom</span>
+              <input
+                type="text"
+                id="prenom"
+                name="prenom"
+                [ngModel]="form().prenom"
+                (ngModelChange)="form.update(f => ({ ...f, prenom: $event }))"
+                required
+              />
+            </label>
+            <label class="ui-field">
+              <span>Nom</span>
+              <input
+                type="text"
+                id="nom"
+                name="nom"
+                [ngModel]="form().nom"
+                (ngModelChange)="form.update(f => ({ ...f, nom: $event }))"
+                required
+              />
+            </label>
+          </div>
+
+          @if (isNageur()) {
+            <div class="auth-form-row">
+              <label class="ui-field">
+                <span>Âge</span>
+                <input
+                  type="number"
+                  id="age"
+                  name="age"
+                  min="5"
+                  max="99"
+                  [ngModel]="form().age"
+                  (ngModelChange)="form.update(f => ({ ...f, age: $event }))"
+                />
+              </label>
+              <label class="ui-field">
+                <span>Sexe</span>
+                <select
+                  id="sexe"
+                  name="sexe"
+                  [ngModel]="form().sexe"
+                  (ngModelChange)="form.update(f => ({ ...f, sexe: $event }))"
+                >
+                  <option value="">— Choisir —</option>
+                  <option value="M">Masculin</option>
+                  <option value="F">Féminin</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="ui-field">
+              <span>Catégorie</span>
+              <input
+                type="text"
+                id="categorie"
+                name="categorie"
+                [ngModel]="form().categorie"
+                (ngModelChange)="form.update(f => ({ ...f, categorie: $event }))"
+                placeholder="Ex : Benjamins, Minimes, Juniors…"
+              />
+            </label>
+          }
+
+          @if (!isNageur()) {
+            <label class="ui-field">
+              <span>Groupes</span>
+              <input
+                type="text"
+                id="groupes"
+                name="groupes"
+                [ngModel]="form().groupes"
+                (ngModelChange)="form.update(f => ({ ...f, groupes: $event }))"
+                placeholder="Ex : Groupe A, Groupe B…"
+              />
+            </label>
+          }
+
+
+
+          <button
+            type="submit"
+            class="dash-btn dash-btn-primary auth-gate-submit"
+            [disabled]="saving()"
+          >
+            @if (saving()) {
+              <span class="auth-spinner"></span>Enregistrement…
+            } @else {
+              Terminer l'inscription
+            }
+          </button>
+        </form>
+
+        <p class="auth-gate-footer">
+          <a routerLink="/register">Créer un nouveau compte</a>
+        </p>
+      }
+    </section>
+  </div>
+</div>

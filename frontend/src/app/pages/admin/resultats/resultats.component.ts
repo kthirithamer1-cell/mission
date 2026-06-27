@@ -32,7 +32,7 @@ export class ResultatsComponent implements OnInit {
     const year = this.activeYear();
 
     if (query) {
-      list = list.filter(c => c.nom.toLowerCase().includes(query) || c.lieu.toLowerCase().includes(query));
+      list = list.filter(c => c.nom.toLowerCase().includes(query) || (c.lieu ?? '').toLowerCase().includes(query));
     }
 
     if (year !== 'Toutes') {

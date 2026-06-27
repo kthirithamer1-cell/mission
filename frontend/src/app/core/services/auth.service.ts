@@ -8,10 +8,12 @@ import {
   LoginRequest,
   LoginResponse,
   MessageResponse,
+  ProfileSetupRequest,
   RegisterRequest,
   RegisterResponse,
   ResetPasswordRequest,
   Utilisateur,
+  VerifyEmailResponse,
 } from '../models/auth.models';
 
 const TOKEN_KEY = 'token';
@@ -39,9 +41,23 @@ export class AuthService {
   }
 
   verifyEmail(token: string): Observable<MessageResponse> {
-    return this.http.get<MessageResponse>(
+    return this.http.get<VerifyEmailResponse>(
       `${environment.apiUrl}/auth/verify-email`,
       { params: { token } }
+    );
+  }
+
+  getProfileSetup(token: string): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(
+      `${environment.apiUrl}/auth/profile-setup`,
+      { params: { token } }
+    );
+  }
+
+  completeProfileSetup(data: ProfileSetupRequest): Observable<Utilisateur> {
+    return this.http.post<Utilisateur>(
+      `${environment.apiUrl}/auth/profile-setup`,
+      data
     );
   }
 

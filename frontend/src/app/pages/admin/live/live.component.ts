@@ -200,7 +200,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     // Group by swimmer for points
     const pointsMap = new Map<string, number>();
     events.forEach(e => {
-      if (e.points) {
+      if (e.points && e.nageurNom) {
         const current = pointsMap.get(e.nageurNom) || 0;
         pointsMap.set(e.nageurNom, current + e.points);
       }

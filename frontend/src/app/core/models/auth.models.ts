@@ -32,6 +32,23 @@ export interface RegisterResponse {
   utilisateur: Utilisateur;
 }
 
+export interface VerifyEmailResponse {
+  message: string;
+  utilisateur: Utilisateur;
+  profileSetupToken: string;
+}
+
+export interface ProfileSetupRequest {
+  token: string;
+  nom?: string;
+  prenom?: string;
+  age?: number;
+  sexe?: string;
+  categorie?: string;
+  clubId?: number;
+  groupes?: string;
+}
+
 export interface MessageResponse {
   message: string;
 }

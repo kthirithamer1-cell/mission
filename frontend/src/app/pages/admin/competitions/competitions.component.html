@@ -65,8 +65,8 @@
       <article class="dash-card" style="display: flex; flexDirection: column; justify-content: space-between; padding: 20px; position: relative;">
         <!-- Status Badge absolute top-right -->
         <div style="position: absolute; top: 15px; right: 15px;">
-          <span [class]="getStatusBadgeClass(comp.statut)" style="font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px;">
-            {{ getStatusText(comp.statut) }}
+          <span [class]="getStatusBadgeClass(comp.statut ?? '')" style="font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px;">
+            {{ getStatusText(comp.statut ?? '') }}
           </span>
         </div>
 

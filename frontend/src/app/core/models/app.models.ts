@@ -157,3 +157,107 @@ export interface CalendarResponse {
   totalHours: number;
   events: CalendarEvent[];
 }
+
+export interface Resultat {
+  id?: number;
+  temps: string;
+  classement?: number;
+  points?: number;
+  record?: boolean;
+  dateCompetition?: string;
+  nageurId?: number;
+  nageurNom?: string;
+  epreuveId?: number;
+  epreuveNom?: string;
+  competitionNom?: string;
+}
+
+export interface SwimmerSummary {
+  nageurNom: string;
+  totalMedaillesOr: number;
+  totalPoints: number;
+}
+
+export interface ClubStats {
+  totalCompetitions: number;
+  totalResultats: number;
+  totalRecords: number;
+  repartitionStyles: { [key: string]: number };
+  topSwimmers: SwimmerSummary[];
+}
+
+export interface SwimmerStats {
+  nageurId: number;
+  nageurNom: string;
+  totalCourses: number;
+  medaillesOr: number;
+  medaillesArgent: number;
+  medaillesBronze: number;
+  averagePoints: number;
+  recordsPersonnels: Resultat[];
+  progressions: { [key: string]: Resultat[] };
+}
+
+export interface Competition {
+  id?: number;
+  nom: string;
+  lieu?: string;
+  dateDebut?: string;
+  dateFin?: string;
+  type?: string;
+  statut?: string;
+  niveau?: string;
+  organisateur?: string;
+  description?: string;
+  specialite?: string;
+  epreuve?: string;
+  saison?: string;
+}
+
+export interface CompetitionInternationale {
+  id?: number;
+  nom: string;
+  lieu?: string;
+  dates?: string;
+  type?: string;
+  resultatsPrincipaux?: string;
+}
+
+export interface NageurInternational {
+  id?: number;
+  nom: string;
+  prenom: string;
+  pays?: string;
+  club?: string;
+  nationalite?: string;
+  specialite?: string;
+  palmares?: string;
+  recordsPersonnels?: string;
+  photoUrl?: string;
+}
+
+export interface RecordMondial {
+  id?: number;
+  epreuve?: string;
+  temps?: string;
+  nageur?: string;
+  nageurNom?: string;
+  pays?: string;
+  date?: string;
+  nationalite?: string;
+}
+
+export interface LiveResultEvent {
+  id?: number;
+  competitionId?: number;
+  epreuveId?: number;
+  epreuveNom?: string;
+  nageurId?: number;
+  nageurNom?: string;
+  temps?: string;
+  points?: number;
+  classement?: number;
+  dateCompetition?: string;
+  record?: boolean;
+  timestamp?: number;
+}

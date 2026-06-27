@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="rope" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="58" fill="url(#bg)"/>
+  <path d="M30 110L50 10M90 110L70 10" stroke="#0ea5e9" stroke-width="2" opacity="0.6"/>
+  <path d="M60 110L60 10" stroke="url(#rope)" stroke-width="4" stroke-dasharray="8,4"/>
+  <path d="M20 110L43 10" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6,4" opacity="0.8"/>
+  <path d="M100 110L77 10" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6,4" opacity="0.8"/>
+  <path d="M35 40c10-3 20-3 30 0M15 70c15-4 30-4 45 0M65 80c10-3 20-3 30 0" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+</svg>
